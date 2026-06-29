@@ -1,0 +1,108 @@
+============================================================
+CLEANING REPORT — 2026-06-28 17:15:46
+============================================================
+INPUT : 49,041 rows | 36 cols
+OUTPUT: 49,041 rows | 32 cols
+
+
+[STEP - 1 - DUPLICATE REMOVAL]
+  [ACTION]  Kiểm tra duplicate hoàn toàn
+  [WHY]     Đảm bảo không có dòng trùng lặp 100%
+  [IMPACT]  49,041 rows → 49,041 rows (không có duplicate)
+  [ACTION]  Kiểm tra duplicate theo business key (address, sale_date, sale_price)
+  [WHY]     Đảm bảo không có giao dịch nào bị đếm trùng
+  [IMPACT]  49,041 rows → 49,041 rows (không có duplicate)
+
+[STEP - 2 - MISSING VALUES HANDLING]
+  [ACTION]  Drop cột 'easement' (>50% missing)
+  [WHY]     Cột có 100.00% giá trị thiếu → không đủ thông tin để phân tích
+  [IMPACT]  36 cols → 30 cols (drop 'easement')
+  [ACTION]  Drop cột 'apartment_number' (>50% missing)
+  [WHY]     Cột có 75.32% giá trị thiếu → không đủ thông tin để phân tích
+  [IMPACT]  36 cols → 30 cols (drop 'apartment_number')
+  [ACTION]  Drop cột 'land_sqft' (>50% missing)
+  [WHY]     Cột có 52.26% giá trị thiếu → không đủ thông tin để phân tích
+  [IMPACT]  36 cols → 30 cols (drop 'land_sqft')
+  [ACTION]  Drop cột 'gross_sqft' (>50% missing)
+  [WHY]     Cột có 52.26% giá trị thiếu → không đủ thông tin để phân tích
+  [IMPACT]  36 cols → 30 cols (drop 'gross_sqft')
+  [ACTION]  Drop cột 'SALE PRICE PER SQFT' (>50% missing)
+  [WHY]     Cột có 52.48% giá trị thiếu → không đủ thông tin để phân tích
+  [IMPACT]  36 cols → 30 cols (drop 'SALE PRICE PER SQFT')
+  [ACTION]  Drop cột 'SQFT_PER_UNIT' (>50% missing)
+  [WHY]     Cột có 52.43% giá trị thiếu → không đủ thông tin để phân tích
+  [IMPACT]  36 cols → 30 cols (drop 'SQFT_PER_UNIT')
+  [ACTION]  Fill cột số 'zip_code' với median
+  [WHY]     Dữ liệu lệch → median robust hơn mean
+  [IMPACT]  16 nulls → 0 nulls (median = 11,205.00)
+  [ACTION]  Fill cột số 'residential_units' với median
+  [WHY]     Dữ liệu lệch → median robust hơn mean
+  [IMPACT]  15,408 nulls → 0 nulls (median = 1.00)
+  [ACTION]  Fill cột số 'commercial_units' với median
+  [WHY]     Dữ liệu lệch → median robust hơn mean
+  [IMPACT]  23,699 nulls → 0 nulls (median = 0.00)
+  [ACTION]  Fill cột số 'total_units' với median
+  [WHY]     Dữ liệu lệch → median robust hơn mean
+  [IMPACT]  13,478 nulls → 0 nulls (median = 1.00)
+  [ACTION]  Fill cột số 'RESIDENTIAL_RATIO' với median
+  [WHY]     Dữ liệu lệch → median robust hơn mean
+  [IMPACT]  15,492 nulls → 0 nulls (median = 1.00)
+  [ACTION]  Fill cột text 'address' với 'UNKNOWN'
+  [WHY]     Giữ nguyên dòng có thiếu thông tin text
+  [IMPACT]  1 nulls → 0 nulls (fill 'UNKNOWN')
+  [ACTION]  Kiểm tra cột target 'sale_price'
+  [WHY]     Đảm bảo target variable không có missing
+  [IMPACT]  0 nulls (đầy đủ)
+
+[STEP - 3 - DATA TYPES FIXING]
+  [ACTION]  Chuyển SALE_PRICE sang float64
+  [WHY]     Đảm bảo kiểu số cho tính toán
+  [IMPACT]  int64 → float64
+  [ACTION]  Parse SALE_DATE sang datetime
+  [WHY]     Chuẩn hóa format ngày tháng YYYY-MM-DD
+  [IMPACT]  object → datetime64[ns] (parse lỗi: 0)
+  [ACTION]  Giữ ZIP_CODE làm string
+  [WHY]     ZIP code có thể có leading zero → không ép int
+  [IMPACT]  float64 → string
+  [ACTION]  Chuyển YEAR_BUILT sang Int64
+  [WHY]     Năm xây dựng là số nguyên → xử lý giá trị 0
+  [IMPACT]  float64 → Int64 (giá trị 0 → NaN: 0)
+
+[STEP - 4 - TEXT CONSISTENCY]
+  [ACTION]  Strip khoảng trắng thừa ở tất cả cột text
+  [WHY]     Khoảng trắng đầu/cuôi → gây trùng lặp khi filter
+  [IMPACT]  15 cột (thay đổi 0 giá trị)
+  [ACTION]  Uppercase cột 'borough'
+  [WHY]     Chuẩn hóa → tránh trùng lặp do case sensitivity
+  [IMPACT]  Thay đổi 49,041 giá trị
+  [ACTION]  Uppercase cột 'neighborhood'
+  [WHY]     Chuẩn hóa → tránh trùng lặp do case sensitivity
+  [IMPACT]  Thay đổi 0 giá trị
+  [ACTION]  Title case cột 'address'
+  [WHY]     Chuẩn hóa format địa chỉ
+  [IMPACT]  Thay đổi 49,034 giá trị
+
+[STEP - 5 - OUTLIER HANDLING]
+  [ACTION]  Flag is_internal_transfer=True cho SALE_PRICE < $1,000
+  [WHY]     Giao dịch giá rất thấp → có thể là chuyển nhượng nội bộ gia đình
+  [IMPACT]  Flag 1,299 rows (KHÔNG xóa)
+  [ACTION]  Flag is_luxury=True cho SALE_PRICE > $100,000,000
+  [WHY]     Giao dịch giá rất cao → bất động sản siêu sang trọng
+  [IMPACT]  Flag 351 rows (KHÔNG xóa)
+  [ACTION]  Kiểm tra YEAR_BUILT hợp lệ (1800-2026)
+  [WHY]     Đảm bảo năm xây dựng trong phạm vi hợp lý
+  [IMPACT]  Tất cả giá trị hợp lệ
+
+[STEP - 6 - IRRELEVANT COLUMNS]
+  [ACTION]  Kiểm tra cột toàn null
+  [WHY]     Loại bỏ cột không có dữ liệu
+  [IMPACT]  Không có cột nào toàn null
+  [ACTION]  Kiểm tra cột zero variance
+  [WHY]     Loại bỏ cột không có thông tin phân biệt
+  [IMPACT]  Không có cột nào zero variance
+
+============================================================
+TỔNG KẾT:
+- Dòng đã xóa   : 0
+- Cột đã xóa    : 4
+============================================================
