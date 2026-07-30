@@ -5,12 +5,13 @@ import plotly.express as px
 import plotly.graph_objects as go
 import json
 import os
+import zlib
 
 # ════════════════════════════════════════════════════════════
 # CẤU HÌNH TRANG
 # ════════════════════════════════════════════════════════════
 st.set_page_config(
-    page_title="Phân tích Thị trường Bất động sản NYC",
+    page_title="Báo cáo Phân tích Thị trường Bất động sản NYC 2025 - 2026",
     layout="wide",
     page_icon="🏙️",
     initial_sidebar_state="expanded",
@@ -20,7 +21,7 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 html, body, [class*="css"] { font-family: 'Inter', sans-serif; font-weight: 500; }
-.main { background-color: #f0f4ff; }
+.main { background-color: #f8fafc; }
 [data-testid="stMetric"] {
     background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
     padding: 18px 20px;
@@ -131,7 +132,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; font-weight: 500;
 """, unsafe_allow_html=True)
 
 # ════════════════════════════════════════════════════════════
-# HẰNG SỐ & BẢN MÀU
+# HẰNG SỐ, TỌA ĐỘ BẢN ĐỒ & BẢN MÀU
 # ════════════════════════════════════════════════════════════
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
@@ -164,6 +165,122 @@ REQUIRED_COLS = [
     'sale_price','sale_year','sale_date','building_age','total_units',
     'pop_density','avg_income','gdp_local','dist_center','amenity_score',
 ]
+
+# Tọa độ địa lý NYC cho bản đồ Nhiệt (Hotspot Heatmap)
+BOROUGH_COORDS = {
+    'Manhattan':     (40.7831, -73.9712),
+    'Brooklyn':      (40.6782, -73.9442),
+    'Queens':        (40.7282, -73.7949),
+    'Bronx':         (40.8448, -73.8648),
+    'Staten Island': (40.5795, -74.1502),
+}
+
+NEIGHBORHOOD_COORDS = {
+    # MANHATTAN
+    'UPPER EAST SIDE (59-79)': (40.7700, -73.9590),
+    'UPPER EAST SIDE (79-96)': (40.7780, -73.9530),
+    'UPPER EAST SIDE (96-110)': (40.7910, -73.9470),
+    'UPPER WEST SIDE (59-79)': (40.7760, -73.9810),
+    'UPPER WEST SIDE (79-96)': (40.7890, -73.9720),
+    'UPPER WEST SIDE (96-110)': (40.8000, -73.9630),
+    'MIDTOWN EAST': (40.7540, -73.9720),
+    'MIDTOWN WEST': (40.7600, -73.9880),
+    'MIDTOWN CBD': (40.7550, -73.9800),
+    'CHELSEA': (40.7465, -74.0014),
+    'GREENWICH VILLAGE-CENTRAL': (40.7336, -73.9996),
+    'GREENWICH VILLAGE-WEST': (40.7350, -74.0060),
+    'GRAMERCY': (40.7368, -73.9845),
+    'MURRAY HILL': (40.7483, -73.9783),
+    'EAST VILLAGE': (40.7265, -73.9815),
+    'LOWER EAST SIDE': (40.7150, -73.9840),
+    'SOHO': (40.7233, -74.0030),
+    'TRIBECA': (40.7163, -74.0086),
+    'FINANCIAL': (40.7075, -74.0090),
+    'HARLEM-CENTRAL': (40.8116, -73.9465),
+    'HARLEM-EAST': (40.7957, -73.9389),
+    'HARLEM-WEST': (40.8150, -73.9560),
+    'WASHINGTON HEIGHTS UPPER': (40.8500, -73.9360),
+    'WASHINGTON HEIGHTS LOWER': (40.8380, -73.9420),
+    'INWOOD': (40.8677, -73.9212),
+    'KIPS BAY': (40.7396, -73.9801),
+    'CHINATOWN': (40.7158, -73.9970),
+    'BATTERY PARK CITY': (40.7120, -74.0150),
+    'MORNINGSIDE HEIGHTS': (40.8080, -73.9630),
+
+    # QUEENS
+    'FLUSHING-NORTH': (40.7675, -73.8331),
+    'FLUSHING-SOUTH': (40.7420, -73.8210),
+    'FOREST HILLS': (40.7186, -73.8448),
+    'BAYSIDE': (40.7675, -73.7745),
+    'ASTORIA': (40.7644, -73.9235),
+    'JACKSON HEIGHTS': (40.7557, -73.8831),
+    'ELMHURST': (40.7369, -73.8784),
+    'LONG ISLAND CITY': (40.7447, -73.9485),
+    'REGO PARK': (40.7258, -73.8622),
+    'WOODSIDE': (40.7454, -73.9038),
+    'SUNNYSIDE': (40.7434, -73.9241),
+    'WHITESTONE': (40.7892, -73.8117),
+    'RIDGEWOOD': (40.7061, -73.9015),
+    'GLENDALE': (40.7011, -73.8876),
+    'MASPETH': (40.7230, -73.9100),
+    'MIDDLE VILLAGE': (40.7160, -73.8860),
+    'JAMAICA': (40.7027, -73.7890),
+    'JAMAICA ESTATES': (40.7234, -73.7834),
+    'HOLLIS': (40.7117, -73.7667),
+    'QUEENS VILLAGE': (40.7170, -73.7380),
+    'HOWARD BEACH': (40.6570, -73.8430),
+    'OZONE PARK': (40.6811, -73.8427),
+    'RICHMOND HILL': (40.6953, -73.8315),
+    'KEW GARDENS': (40.7090, -73.8310),
+
+    # BROOKLYN
+    'BEDFORD STUYVESANT': (40.6872, -73.9418),
+    'BAY RIDGE': (40.6260, -74.0300),
+    'BOROUGH PARK': (40.6350, -73.9920),
+    'PARK SLOPE': (40.6711, -73.9814),
+    'BUSHWICK': (40.6944, -73.9213),
+    'WILLIAMSBURG-NORTH': (40.7180, -73.9570),
+    'WILLIAMSBURG-SOUTH': (40.7090, -73.9590),
+    'GREENPOINT': (40.7305, -73.9515),
+    'DUMBO': (40.7033, -73.9881),
+    'BROOKLYN HEIGHTS': (40.6960, -73.9936),
+    'COBBLE HILL': (40.6877, -73.9947),
+    'CARROLL GARDENS': (40.6800, -73.9950),
+    'CROWN HEIGHTS': (40.6700, -73.9430),
+    'FLATBUSH-LEFFERTS GARDENS': (40.6580, -73.9510),
+    'FLATBUSH-CENTRAL': (40.6420, -73.9580),
+    'SUNSET PARK': (40.6450, -74.0080),
+    'BENSONHURST': (40.6139, -73.9922),
+    'SHEEPSHEAD BAY': (40.5868, -73.9542),
+    'CONEY ISLAND': (40.5750, -73.9820),
+    'CANARSIE': (40.6400, -73.8960),
+
+    # BRONX
+    'RIVERDALE': (40.8904, -73.9125),
+    'KINGSBRIDGE/JEROME PARK': (40.8790, -73.8970),
+    'MOTT HAVEN/PORT MORRIS': (40.8090, -73.9230),
+    'MELROSE/MORRISANIA': (40.8250, -73.9100),
+    'FORDHAM': (40.8615, -73.8890),
+    'BELMONT': (40.8550, -73.8870),
+    'THROGS NECK': (40.8170, -73.8160),
+
+    # STATEN ISLAND
+    'GREAT KILLS': (40.5515, -74.1513),
+    'TODT HILL': (40.5980, -74.1100),
+    'ST. GEORGE': (40.6430, -74.0760),
+    'NEW DORP': (40.5730, -74.1170),
+    'ELTINGVILLE': (40.5430, -74.1650),
+}
+
+def get_neighborhood_coords(neighborhood, borough_name):
+    """Lấy tọa độ lat/lon chuẩn hoặc suy luận theo offset nhỏ từ centroid quận."""
+    if neighborhood in NEIGHBORHOOD_COORDS:
+        return NEIGHBORHOOD_COORDS[neighborhood]
+    b_lat, b_lon = BOROUGH_COORDS.get(borough_name, (40.7128, -74.0060))
+    h = zlib.adler32(str(neighborhood).encode('utf-8'))
+    off_lat = ((h % 100) - 50) * 0.0008
+    off_lon = (((h // 100) % 100) - 50) * 0.0008
+    return (b_lat + off_lat, b_lon + off_lon)
 
 # ════════════════════════════════════════════════════════════
 # HÀM DỮ LIỆU
@@ -210,7 +327,7 @@ def load_ml_data():
     return pred_df, importance, metrics
 
 # ════════════════════════════════════════════════════════════
-# HELPER UI
+# HELPER UI & COMPONENT TÓM TẮT TRỰC QUAN
 # ════════════════════════════════════════════════════════════
 def fmt_M(v, d=2): return f"${v/1e6:.{d}f}M"
 def insight_box(html): st.markdown(f'<div class="insight-box">{html}</div>', unsafe_allow_html=True)
@@ -235,6 +352,80 @@ def clayout(fig, h=340, t=20, b=20, l=10, r=10, leg=False):
     fig.update_yaxes(tickfont=dict(size=12, color='#374151', family='Inter'),
                      title_font=dict(size=13, color='#374151', family='Inter'))
     return fig
+
+def render_factor_summary_matrix(df_in):
+    """
+    Tạo Bảng & Biểu đồ Tóm tắt Yếu tố Tác động Giá (Top Factor Summary Matrix).
+    Đánh giá và phân loại rõ yếu tố ảnh hưởng RẤT MẠNH / MẠNH / TRUNG BÌNH / YẾU.
+    """
+    factors = [
+        ('gross_sqft', 'Diện tích công trình (gross_sqft)', 'Quy mô không gian sử dụng; biến số quan trọng hàng đầu định giá tổng tài sản.'),
+        ('avg_income', 'Thu nhập khu vực (avg_income)', 'Mặt bằng thu nhập cư dân; đại diện cho sức mua và mức độ đắt đỏ của vùng.'),
+        ('amenity_score', 'Điểm tiện ích (amenity_score)', 'Chất lượng tiện ích kết nối xung quanh (giao thông, trường học, dịch vụ).'),
+        ('dist_center', 'KC đến trung tâm (dist_center)', 'Khoảng cách địa lý tới trung tâm tài chính Manhattan (càng xa giá giảm).'),
+        ('pop_density', 'Mật độ dân số (pop_density)', 'Mật độ dân cư sinh sống; phản ánh độ sầm uất và nhu cầu nhà ở khu vực.'),
+        ('building_age', 'Tuổi công trình (building_age)', 'Số năm công trình đã vận hành (công trình cũ chịu khấu hao tài sản).'),
+        ('land_sqft', 'Diện tích đất (land_sqft)', 'Diện tích lô đất (ảnh hưởng ít hơn gross_sqft do đặc thù nhà chung cư tại NYC).'),
+    ]
+    
+    rows = []
+    for col, name, desc in factors:
+        if col in df_in.columns:
+            valid = df_in.dropna(subset=['sale_price', col])
+            if len(valid) >= 20:
+                r = valid['sale_price'].corr(valid[col])
+                abs_r = abs(r)
+                if abs_r >= 0.50:
+                    level = "🚀 RẤT MẠNH"
+                elif abs_r >= 0.35:
+                    level = "📈 MẠNH"
+                elif abs_r >= 0.15:
+                    level = "⚖️ TRUNG BÌNH"
+                else:
+                    level = "📉 YẾU"
+                
+                direction = "Thuận (+)" if r > 0 else "Nghịch (-)"
+                rows.append({
+                    'Yếu tố tác động': name,
+                    'Tương quan (r)': round(r, 2),
+                    'Mức độ ảnh hưởng': level,
+                    'Chiều tác động': direction,
+                    'Giải thích ý nghĩa thực tế': desc,
+                    '_abs_r': abs_r
+                })
+    
+    fdf = pd.DataFrame(rows).sort_values('_abs_r', ascending=False)
+    
+    col_tbl, col_chart = st.columns([3, 2])
+    with col_tbl:
+        display_df = fdf[['Yếu tố tác động', 'Tương quan (r)', 'Mức độ ảnh hưởng', 'Chiều tác động', 'Giải thích ý nghĩa thực tế']].copy()
+        st.dataframe(
+            display_df,
+            column_config={
+                "Tương quan (r)": st.column_config.NumberColumn(format="%.2f"),
+                "Mức độ ảnh hưởng": st.column_config.TextColumn(),
+            },
+            width='stretch',
+            hide_index=True
+        )
+    with col_chart:
+        fdf_chart = fdf.sort_values('_abs_r', ascending=True)
+        colors = [C_GREEN if r > 0 else C_RED for r in fdf_chart['Tương quan (r)']]
+        fig_sum = go.Figure(go.Bar(
+            x=fdf_chart['Tương quan (r)'],
+            y=fdf_chart['Yếu tố tác động'].apply(lambda x: x.split(' (')[0]),
+            orientation='h',
+            marker_color=colors,
+            text=[f"r = {r:+.2f}" for r in fdf_chart['Tương quan (r)']],
+            textposition='outside'
+        ))
+        clayout(fig_sum, h=300, t=30, b=20, l=10, r=60)
+        fig_sum.update_layout(
+            title="Xếp hạng Mức độ Tương quan với Giá bán (r)",
+            title_font=dict(size=13, color='#374151'),
+            xaxis=dict(range=[-0.4, 0.9], zeroline=True, zerolinecolor='#cbd5e1', title="Hệ số tương quan Pearson (r)")
+        )
+        st.plotly_chart(fig_sum, width='stretch')
 
 # ════════════════════════════════════════════════════════════
 # LOAD DỮ LIỆU
@@ -298,7 +489,7 @@ h1, h2 = st.columns([4, 1])
 with h1:
     st.markdown("""
     <h1 style='font-size:24px;font-weight:800;color:#0f172a;margin:0'>
-    🏙️ Phân tích Thị trường Bất động sản NYC
+    🏙️ BÁO CÁO PHÂN TÍCH THỊ TRƯỜNG BẤT ĐỘNG SẢN NEW YORK GIAI ĐOẠN 2025 - 2026
     </h1>""", unsafe_allow_html=True)
 with h2:
     st.markdown(f"""
@@ -328,8 +519,7 @@ with tab0:
     padding:18px 24px;color:#fff;margin-bottom:22px;
     box-shadow:0 6px 24px rgba(99,102,241,0.35)'>
     <b style='font-size:15px;letter-spacing:-0.3px'>🏙️ Thị trường đang ở đâu và quy mô như thế nào?</b><br>
-    <span style='font-size:12px;opacity:0.88'>Tổng quan về quy mô, mặt bằng giá và cơ cấu thị trường
-    bất động sản NYC trong bộ lọc hiện tại.</span>
+    <span style='font-size:12px;opacity:0.88'>Tổng quan về quy mô, mặt bằng giá và cơ cấu thị trường bất động sản NYC trong bộ lọc hiện tại.</span>
     </div>
     """, unsafe_allow_html=True)
 
@@ -374,7 +564,7 @@ with tab0:
                      title="Số giao dịch theo quận")
         fig.update_traces(texttemplate='%{text:,}', textposition='auto')
         clayout(fig, h=280, t=40, r=80)
-        fig.update_layout(yaxis=dict(automargin=True), xaxis=dict(automargin=True),
+        fig.update_layout(yaxis=dict(automargin=True, title='Quận'), xaxis=dict(automargin=True, title='Số giao dịch'),
                           title_font=dict(size=13, color='#374151'))
         st.plotly_chart(fig, width='stretch')
     with cb:
@@ -384,7 +574,7 @@ with tab0:
                      title="Giá trung vị theo quận ($)")
         fig.update_traces(textposition='auto')
         clayout(fig, h=280, t=40, r=100)
-        fig.update_layout(yaxis=dict(automargin=True), xaxis=dict(tickformat='$,.0f', automargin=True),
+        fig.update_layout(yaxis=dict(automargin=True, title='Quận'), xaxis=dict(tickformat='$,.0f', automargin=True, title='Giá trung vị ($)'),
                           title_font=dict(size=13, color='#374151'))
         st.plotly_chart(fig, width='stretch')
 
@@ -413,11 +603,11 @@ with tab0:
         fig = px.box(df_bt0, x='building_type', y='sale_price',
                      color='building_type',
                      color_discrete_sequence=[C_BLUE,C_SKY,C_ORANGE,C_GREEN,'#8b5cf6',C_GRAY],
-                     points=False, labels={'building_type':'','sale_price':'Giá bán ($)'},
+                     points=False, labels={'building_type':'Loại hình BĐS','sale_price':'Giá bán ($)'},
                      category_orders={'building_type': med_bt0.index.tolist()},
                      title="Phân bố giá theo loại hình (top 6)")
         clayout(fig, h=320, t=40, b=60, l=10, r=10)
-        fig.update_layout(xaxis=dict(automargin=True, tickangle=-15, tickfont_size=10),
+        fig.update_layout(xaxis=dict(automargin=True, tickangle=-15, tickfont_size=10, title=''),
                           yaxis=dict(tickformat='$,.0f', automargin=True),
                           title_font=dict(size=13, color='#374151'))
         st.plotly_chart(fig, width='stretch')
@@ -439,17 +629,86 @@ with tab0:
       Tỷ lệ giao dịch ≥$1M: <b>{pct_1m:.1f}%</b> — thị trường có xu hướng cao cấp.
     """)
 
+    # ── Phân khúc khách hàng ──────────────────────────────────
+    divider()
+    section_q("Thị trường đang phục vụ nhóm khách hàng nào?",
+              "Phân loại theo số căn trong tòa nhà — proxy cho mục đích mua (ở thực vs đầu tư).")
+
+    df['_segment'] = pd.cut(
+        df['total_units'],
+        bins=[-1, 1, 10, float('inf')],
+        labels=['① Mua ở thực (1 căn)', '② Đầu tư nhỏ (2-10)', '③ Tổ chức (>10)']
+    )
+    seg_cnt  = df['_segment'].value_counts().sort_index()
+    seg_med  = df.groupby('_segment', observed=True)['sale_price'].median()
+    seg_df   = pd.DataFrame({'Phân khúc': seg_cnt.index,
+                              'Số GD': seg_cnt.values,
+                              'Giá trung vị': seg_med.values})
+    seg_df['% thị trường'] = seg_df['Số GD'] / seg_df['Số GD'].sum() * 100
+
+    sa, sb = st.columns(2)
+    with sa:
+        fig_seg = px.bar(seg_df, x='Phân khúc', y='Số GD',
+                         color='Phân khúc',
+                         color_discrete_sequence=[C_GREEN, C_BLUE, C_ORANGE],
+                         text=seg_df['% thị trường'].apply(lambda v: f'{v:.1f}%'),
+                         title="Cơ cấu phân khúc khách hàng")
+        fig_seg.update_traces(textposition='outside')
+        clayout(fig_seg, h=300, t=40, b=20)
+        fig_seg.update_layout(showlegend=False,
+                               xaxis=dict(automargin=True, title='Phân khúc'),
+                               yaxis=dict(automargin=True, title='Số giao dịch'),
+                               title_font=dict(size=13, color='#374151'))
+        st.plotly_chart(fig_seg, width='stretch')
+    with sb:
+        fig_sp = px.bar(seg_df, x='Phân khúc', y='Giá trung vị',
+                        color='Phân khúc',
+                        color_discrete_sequence=[C_GREEN, C_BLUE, C_ORANGE],
+                        text=seg_df['Giá trung vị'].apply(fmt_M),
+                        title="Giá trung vị theo phân khúc")
+        fig_sp.update_traces(textposition='outside')
+        clayout(fig_sp, h=300, t=40, b=20)
+        fig_sp.update_layout(showlegend=False,
+                               xaxis=dict(automargin=True, title='Phân khúc'),
+                               yaxis=dict(tickformat='$,.0f', automargin=True, title='Giá trung vị ($)'),
+                               title_font=dict(size=13, color='#374151'))
+        st.plotly_chart(fig_sp, width='stretch')
+
+    # ── Nhận diện rủi ro đầu tư ───────────────────────────────
+    divider()
+    section_q("Khu vực nào có rủi ro giá cao nhất?",
+              "Rủi ro = biến động giá cao (CV cao) hoặc thanh khoản thấp. "
+              "Xanh = ít rủi ro, đỏ = cần thận trọng.")
+
+    borough_risk = df.groupby('borough_name').agg(
+        med_price=('sale_price','median'),
+        std_price=('sale_price','std'),
+        n_gd=('sale_price','count')
+    ).reset_index()
+    borough_risk['CV (%)'] = (borough_risk['std_price'] / borough_risk['med_price'] * 100).round(1)
+    borough_risk['Rủi ro biến động'] = pd.cut(
+        borough_risk['CV (%)'],
+        bins=[0, 80, 120, float('inf')],
+        labels=['🟢 Thấp', '🟡 Trung bình', '🔴 Cao']
+    )
+    borough_risk = borough_risk.sort_values('CV (%)')
+
+    risk_display = borough_risk[['borough_name','med_price','CV (%)','n_gd','Rủi ro biến động']].copy()
+    risk_display.columns = ['Quận','Giá trung vị','Biến động CV (%)','Số giao dịch','Đánh giá rủi ro']
+    risk_display['Giá trung vị'] = risk_display['Giá trung vị'].apply(fmt_M)
+    risk_display['Số giao dịch'] = risk_display['Số giao dịch'].apply(lambda v: f'{v:,}')
+    st.dataframe(risk_display.set_index('Quận'), width='stretch')
+
 # ════════════════════════════════════════════════════════════
-# TAB 1 — PHÂN TÍCH KHU VỰC
+# TAB 1 — PHÂN TÍCH KHU VỰC & BẢN ĐỒ HEATMAP
 # ════════════════════════════════════════════════════════════
 with tab1:
     st.markdown("""
     <div style='background:linear-gradient(135deg,#0f766e,#0d9488,#34d399);border-radius:14px;
     padding:18px 24px;color:#fff;margin-bottom:22px;
     box-shadow:0 6px 24px rgba(16,185,129,0.3)'>
-    <b style='font-size:15px;letter-spacing:-0.3px'>🗺️ Borough và khu vực nào đang dẫn đầu thị trường?</b><br>
-    <span style='font-size:12px;opacity:0.88'>Phân tích chênh lệch giá và hoạt động giao dịch
-    theo từng quận và khu dân cư cụ thể.</span>
+    <b style='font-size:15px;letter-spacing:-0.3px'>🗺️ Bản đồ Nhiệt Khu vực & Phân tích Điểm nóng (NYC Hotspot Map)</b><br>
+    <span style='font-size:12px;opacity:0.88'>Nhận diện điểm nóng giá bán, định giá đơn vị $/sqft và mật độ thanh khoản trên bản đồ tương quan không gian thực.</span>
     </div>
     """, unsafe_allow_html=True)
 
@@ -466,22 +725,116 @@ with tab1:
     kd.metric("Quận giá trung vị cao nhất",  top_bor_p)
     st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
 
+    # ── YÊU CẦU VỀ BẢN ĐỒ (MAP): BẢN ĐỒ TÔ MÀU KHU VỰC (HEATMAP) ──
+    section_q(
+        "Bản đồ Nhiệt Khu vực (NYC Hotspot Heatmap)",
+        "Tô màu khu vực thể hiện trực quan điểm nóng (hotspots) về Giá trung vị, Giá/sqft hoặc Mật độ thanh khoản giao dịch."
+    )
+
+    # Gom nhóm dữ liệu địa lý theo Neighborhood
+    geo_df = df.groupby(['neighborhood', 'borough_name']).agg(
+        med_price=('sale_price', 'median'),
+        med_ppsf=('price_per_sqft', 'median'),
+        n_count=('sale_price', 'count')
+    ).reset_index()
+
+    # Thêm lat, lon cho từng khu vực
+    coords_list = [get_neighborhood_coords(row['neighborhood'], row['borough_name']) for _, row in geo_df.iterrows()]
+    geo_df['lat'] = [c[0] for c in coords_list]
+    geo_df['lon'] = [c[1] for c in coords_list]
+    geo_df['med_ppsf_clean'] = geo_df['med_ppsf'].fillna(0)
+
+    mc1, mc2, mc3 = st.columns([2, 1, 1])
+    with mc1:
+        map_metric = st.radio(
+            "Hiển thị điểm nóng theo:",
+            options=["🔥 Giá trung vị ($)", "📐 Giá/sqft trung vị ($)", "📊 Mật độ giao dịch (Số căn)"],
+            horizontal=True
+        )
+    with mc2:
+        radius_val = st.slider("Bán kính điểm nhiệt (Radius)", 15, 45, 25)
+    with mc3:
+        zoom_val = st.slider("Độ phóng đại (Zoom)", 9, 13, 10)
+
+    if map_metric == "🔥 Giá trung vị ($)":
+        target_z = 'med_price'
+        color_scale = "Plasma"
+        z_title = "Giá trung vị ($)"
+    elif map_metric == "📐 Giá/sqft trung vị ($)":
+        target_z = 'med_ppsf_clean'
+        color_scale = "Inferno"
+        z_title = "Giá/sqft ($)"
+    else:
+        target_z = 'n_count'
+        color_scale = "Viridis"
+        z_title = "Số giao dịch"
+
+    fig_map = px.density_mapbox(
+        geo_df,
+        lat='lat',
+        lon='lon',
+        z=target_z,
+        radius=radius_val,
+        center=dict(lat=40.7400, lon=-73.9400),
+        zoom=zoom_val,
+        mapbox_style="open-street-map",
+        color_continuous_scale=color_scale,
+        hover_name="neighborhood",
+        hover_data={
+            "borough_name": True,
+            "med_price": ":$,.0f",
+            "med_ppsf_clean": ":$,.0f",
+            "n_count": ":,",
+            "lat": False,
+            "lon": False
+        },
+        labels={
+            "borough_name": "Quận",
+            "med_price": "Giá trung vị",
+            "med_ppsf_clean": "Giá/sqft",
+            "n_count": "Số GD"
+        }
+    )
+    clayout(fig_map, h=520, t=10, b=10, l=10, r=10)
+    fig_map.update_layout(
+        coloraxis_colorbar=dict(title=z_title, len=0.8)
+    )
+    st.plotly_chart(fig_map, width='stretch')
+
+    # Chú giải điểm nóng
+    top_p_geo = geo_df.sort_values('med_price', ascending=False).head(3)
+    top_v_geo = geo_df.sort_values('n_count', ascending=False).head(3)
+    p_spots = ", ".join([f"<b>{r['neighborhood'].title()}</b> (${r['med_price']/1e6:.2f}M)" for _, r in top_p_geo.iterrows()])
+    v_spots = ", ".join([f"<b>{r['neighborhood'].title()}</b> ({r['n_count']:,} GD)" for _, r in top_v_geo.iterrows()])
+
+    insight_box(f"""
+    <b>📍 Nhận diện Điểm nóng (Hotspots) trên Bản đồ:</b><br>
+    • 🔴 <b>Điểm nóng về Giá bán (Hotspots Giá cao):</b> Tập trung dày đặc tại khu vực lõi Manhattan: {p_spots}.<br>
+    • 🟢 <b>Điểm nóng về Thanh khoản (Hotspots Giao dịch nhộn nhịp):</b> Phân bố rộng ở Queens & Brooklyn: {v_spots}.<br>
+    • 💡 <i>Mẹo sử dụng bản đồ: Phóng to (Zoom) để quan sát từng góc phố, di chuột qua từng điểm màu nhiệt để xem chi tiết đơn giá $/sqft và tổng số giao dịch thực tế.</i>
+    """)
+
+    divider()
     section_q("Giá bán phân bố như thế nào trong từng quận?",
               "Đường giữa = trung vị. Hộp = khoảng tứ phân vị (25%–75%). Nhãn giá trung vị được ghi trực tiếp.")
 
     bor_ord1 = df.groupby('borough_name')['sale_price'].median().sort_values(ascending=False).index.tolist()
     fig = px.box(df, x='borough_name', y='sale_price', color='borough_name',
                  color_discrete_map=BOROUGH_COLORS, points=False,
-                 labels={'borough_name':'Quận','sale_price':'Giá bán ($)'},
-                 category_orders={'borough_name': bor_ord1})
+                 labels={'borough_name':'Quận','sale_price':'Giá bán (USD)'},
+                 category_orders={'borough_name': bor_ord1},
+                 title='Phân phối giá bán nhà theo Quận')
     for b in bor_ord1:
         m = df[df['borough_name']==b]['sale_price'].median()
         fig.add_annotation(x=b, y=m, text=fmt_M(m), showarrow=False,
                            font=dict(size=11,color='#111827',weight=700),
                            yshift=20, bgcolor='rgba(255,255,255,0.88)', borderpad=3)
-    clayout(fig, h=360, t=20, b=20)
-    fig.update_layout(yaxis=dict(tickformat='$,.0f', automargin=True, title='Giá bán ($)'),
-                      xaxis=dict(automargin=True))
+    clayout(fig, h=360, t=50, b=20)
+    fig.update_layout(
+        title_font=dict(size=14, color='#374151'),
+        yaxis=dict(tickformat='$,.0f', automargin=True, title='Giá bán (USD)'),
+        xaxis=dict(automargin=True, title='Quận')
+    )
     st.plotly_chart(fig, width='stretch')
 
     divider()
@@ -502,7 +855,8 @@ with tab1:
                      labels={'borough_name':'Quận'})
         fig.update_traces(texttemplate='%{text:,}', textposition='auto')
         clayout(fig, h=460, t=40, b=20, r=80, leg=True)
-        fig.update_layout(yaxis=dict(automargin=True, tickfont_size=11), xaxis=dict(automargin=True),
+        fig.update_layout(yaxis=dict(automargin=True, tickfont_size=11, title='Khu vực'),
+                          xaxis=dict(automargin=True, title='Số giao dịch'),
                           legend=dict(orientation='h', y=-0.1, x=0, font_size=11),
                           title_font=dict(size=13, color='#374151'))
         st.plotly_chart(fig, width='stretch')
@@ -521,53 +875,75 @@ with tab1:
                          labels={'borough_name':'Quận','med_ppsf':'$/sqft (trung vị)'})
             fig.update_traces(textposition='auto')
             clayout(fig, h=460, t=40, b=20, r=80, leg=True)
-            fig.update_layout(yaxis=dict(automargin=True, tickfont_size=11),
-                              xaxis=dict(tickformat='$,.0f', automargin=True),
+            fig.update_layout(yaxis=dict(automargin=True, tickfont_size=11, title='Khu vực'),
+                              xaxis=dict(tickformat='$,.0f', automargin=True, title='$/sqft (trung vị)'),
                               legend=dict(orientation='h', y=-0.1, x=0, font_size=11),
                               title_font=dict(size=13, color='#374151'))
             st.plotly_chart(fig, width='stretch')
         else:
             st.info("Không đủ dữ liệu giá/sqft.")
 
-    divider()
-    ppsf_insight = ""
-    if top_n_ppsf_row is not None:
-        ppsf_insight = (f"• Khu vực định giá cao nhất theo $/sqft: <b>{top_n_ppsf_row['Khu vực']}</b> "
-                        f"({top_n_ppsf_row['borough_name']}) — trung vị "
-                        f"<b>${top_n_ppsf_row['med_ppsf']:,.0f}/sqft</b>.")
-    insight_box(f"""
-    <b>📌 Khu vực nào đáng chú ý nhất?</b><br>
-    • <b>{top_neigh.title()}</b> là khu vực sôi động nhất:
-      <b>{top_n_cnt:,} giao dịch</b> ({top_n_cnt/len(df)*100:.1f}% thị trường đang lọc).<br>
-    • Chênh lệch giá trung vị: <b>{top_bor_p}</b> ({fmt_M(bor_med_f.max())})
-      so với thấp nhất ({fmt_M(bor_med_f.min())}) —
-      khoảng cách <b>{bor_med_f.max()/bor_med_f.min():.1f}×</b>.<br>
-    {ppsf_insight}
-    """)
-
 # ════════════════════════════════════════════════════════════
-# TAB 2 — YẾU TỐ QUYẾT ĐỊNH GIÁ
+# TAB 2 — YẾU TỐ QUYẾT ĐỊNH GIÁ & PHÂN TÍCH TƯƠNG QUAN
 # ════════════════════════════════════════════════════════════
 with tab2:
     st.markdown("""
     <div style='background:linear-gradient(135deg,#5b21b6,#7c3aed,#a78bfa);border-radius:14px;
     padding:18px 24px;color:#fff;margin-bottom:22px;
     box-shadow:0 6px 24px rgba(124,58,237,0.35)'>
-    <b style='font-size:15px;letter-spacing:-0.3px'>📐 Điều gì thực sự kéo giá bất động sản lên?</b><br>
-    <span style='font-size:12px;opacity:0.88'>Phân tích tương quan và tác động của các yếu tố
-    vật lý, kinh tế, địa lý đến giá bán thực tế.</span>
+    <b style='font-size:15px;letter-spacing:-0.3px'>📐 Phân tích Ma trận Yếu tố & Các Biến số Quyết định Giá</b><br>
+    <span style='font-size:12px;opacity:0.88'>Tóm tắt các yếu tố ảnh hưởng mạnh/yếu, ma trận tương quan và giải thích ý nghĩa chiều tác động của các biến số chính đến giá bán thực tế.</span>
     </div>
     """, unsafe_allow_html=True)
 
-    section_q("Diện tích có thực sự giải thích được giá bán?",
-              "Dữ liệu được nhóm theo khoảng 200 sqft. Mỗi điểm = giá trung vị nhóm. "
-              "Kích thước điểm = số giao dịch. Loại điểm bất thường từ p97 trở lên để giảm nhiễu.")
+    # ── NGUYÊN TẮC TRỰC QUAN: BẢNG TÓM TẮT YẾU TỐ TÁC ĐỘNG GIÁ ──
+    section_q(
+        "Bảng tóm tắt các yếu tố ảnh hưởng đến giá bất động sản",
+        "Tóm tắt toàn bộ các biến số đo lường, phân loại rõ yếu tố nào ảnh hưởng mạnh hay yếu đến giá bán thực tế."
+    )
+    render_factor_summary_matrix(df)
 
-    df_sq = df[df['gross_sqft'].notna() & df['gross_sqft'].between(100,4000)].copy()
+    divider()
+
+    # ── MA TRẬN TƯƠNG QUAN TỔNG THỂ ──
+    section_q(
+        "Ma trận tương quan tổng thể giữa các yếu tố với Giá bán",
+        "Đọc bản đồ nhiệt: ô màu đỏ = tương quan thuận (+); ô màu xanh = tương quan nghịch (-). Số trong ô là hệ số tương quan r."
+    )
+    cc_cols = ['sale_price','gross_sqft','avg_income','amenity_score','dist_center','pop_density','building_age']
+    cc_lbl  = {'sale_price':'Giá bán','gross_sqft':'Diện tích','avg_income':'Thu nhập TB',
+               'amenity_score':'Điểm tiện ích','dist_center':'KC trung tâm','pop_density':'Mật độ dân số','building_age':'Tuổi công trình'}
+    cc_data = df[cc_cols].dropna()
+    cc_mat  = cc_data.corr()
+    cc_mat.columns = [cc_lbl[c] for c in cc_mat.columns]
+    cc_mat.index   = [cc_lbl[c] for c in cc_mat.index]
+    
+    fig_corr_mat = px.imshow(cc_mat, text_auto='.2f', color_continuous_scale='RdBu_r',
+                            zmin=-1, zmax=1, aspect='equal',
+                            title='Ma trận tương quan giữa các yếu tố và Giá bán')
+    clayout(fig_corr_mat, h=360, t=40, b=20)
+    fig_corr_mat.update_layout(
+        coloraxis_colorbar=dict(title='Hệ số r', len=0.8),
+        title_font=dict(size=13, color='#374151')
+    )
+    st.plotly_chart(fig_corr_mat, width='stretch')
+
+    divider()
+
+    # ── PHÂN TÍCH CHI TIẾT 3 BIẾN SỐ CHÍNH THEO YÊU CẦU ──
+    st.markdown("""
+    <div style='font-size:18px;font-weight:800;color:#1e1b4b;margin-bottom:16px'>
+    🔍 PHÂN TÍCH CHI TIẾT 3 BIẾN SỐ CHỦ ĐẠO TÁC ĐỘNG ĐẾN GIÁ BÁN
+    </div>
+    """, unsafe_allow_html=True)
+
+    # 1. BIẾN SỐ 1: DIỆN TÍCH (gross_sqft)
+    section_q("1. Biến số DIỆN TÍCH CÔNG TRÌNH (gross_sqft) — Mức độ tác động: 🚀 RẤT MẠNH",
+              "Phân tích mối quan hệ giữa quy mô diện tích sàn sử dụng và tổng giá bán bất động sản.")
+    
+    df_sq = df[df['gross_sqft'].notna() & df['gross_sqft'].between(100, 4000)].copy()
     df_sq = df_sq[df_sq['sale_price'] < df_sq['sale_price'].quantile(0.97)]
     corr_sq = df_sq['gross_sqft'].corr(df_sq['sale_price']) if len(df_sq) >= 20 else 0
-    top_bt2_name = 'N/A'; top_bt2_ppsf = 0
-    med_bt2 = pd.Series(dtype=float)
 
     if len(df_sq) >= 50:
         df_sq['bin'] = pd.cut(df_sq['gross_sqft'], bins=range(100,4200,200),
@@ -576,71 +952,103 @@ with tab2:
               .agg(med_price=('sale_price','median'), cnt=('sale_price','count'),
                    sqft_mid=('gross_sqft','median')).reset_index())
         ba = ba[ba['cnt'] >= 10]
-        fig = px.scatter(ba, x='sqft_mid', y='med_price', size='cnt', size_max=30,
-                         color='med_price', color_continuous_scale='Blues', trendline='ols',
-                         labels={'sqft_mid':'Diện tích trung vị (sqft)',
-                                 'med_price':'Giá trung vị ($)','cnt':'Số GD'})
-        clayout(fig, h=340, t=20, b=20)
-        fig.update_layout(coloraxis_showscale=False,
-                          yaxis=dict(tickformat='$,.0f', automargin=True),
-                          xaxis=dict(automargin=True))
-        st.plotly_chart(fig, width='stretch')
-        st.caption(f"Tương quan Pearson: **r = {corr_sq:.3f}** ({len(df_sq):,} giao dịch có dữ liệu diện tích).")
+        fig_sq_chart = px.scatter(ba, x='sqft_mid', y='med_price', size='cnt', size_max=30,
+                                  color='med_price', color_continuous_scale='Blues', trendline='ols',
+                                  labels={'sqft_mid':'Diện tích trung vị (sqft)',
+                                          'med_price':'Giá trung vị ($)','cnt':'Số GD'},
+                                  title="Tương quan giữa Diện tích sử dụng (sqft) và Giá bán trung vị ($)")
+        clayout(fig_sq_chart, h=340, t=40, b=20)
+        fig_sq_chart.update_layout(coloraxis_showscale=False,
+                                   yaxis=dict(tickformat='$,.0f', automargin=True, title='Giá trung vị ($)'),
+                                   xaxis=dict(automargin=True, title='Diện tích trung vị (sqft)'),
+                                   title_font=dict(size=13, color='#374151'))
+        # Đặt tên cho OLS trendline trace để tránh undefined trong legend
+        for trace in fig_sq_chart.data:
+            if hasattr(trace, 'name') and trace.name and 'OLS' in str(trace.name):
+                trace.name = 'Đường xu hướng (OLS)'
+        st.plotly_chart(fig_sq_chart, width='stretch')
 
-    divider()
-    section_q("Loại hình nào có giá/sqft cao nhất và biến động nhất?",
-              "Biểu đồ phân bố kết hợp hộp số liệu. Chỉ giữ top 5 loại hình nhiều giao dịch nhất. Loại điểm bất thường >$5,000/sqft.")
-
-    if len(df_ppsf) >= 20:
-        top5_bt2 = df_ppsf['building_type'].value_counts().head(5).index
-        df_vln2  = df_ppsf[df_ppsf['building_type'].isin(top5_bt2)]
-        med_bt2  = df_vln2.groupby('building_type')['price_per_sqft'].median().sort_values(ascending=False)
-        top_bt2_name = med_bt2.index[0]; top_bt2_ppsf = med_bt2.iloc[0]
-        fig = px.violin(df_vln2, x='building_type', y='price_per_sqft',
-                        box=True, points=False, color='building_type',
-                        color_discrete_sequence=[C_BLUE,C_SKY,C_ORANGE,C_GREEN,'#8b5cf6'],
-                        labels={'building_type':'Loại hình','price_per_sqft':'$/sqft'},
-                        category_orders={'building_type': med_bt2.index.tolist()})
-        for bn, mv in med_bt2.items():
-            fig.add_annotation(x=bn, y=mv, text=f"${mv:,.0f}", showarrow=False,
-                               font=dict(size=10,color='#1f2937',weight=600),
-                               yshift=16, bgcolor='rgba(255,255,255,0.9)', borderpad=2)
-        clayout(fig, h=360, t=20, b=60)
-        fig.update_layout(xaxis=dict(automargin=True, tickangle=-12, tickfont_size=10),
-                          yaxis=dict(tickformat='$,.0f', automargin=True, title='$/sqft'))
-        st.plotly_chart(fig, width='stretch')
-
-    divider()
-    section_q("Yếu tố nào có tương quan mạnh nhất với giá bán?",
-              "Chỉ giữ 5 biến có ý nghĩa kinh tế. r > 0.3 = đáng chú ý. r > 0.5 = tương quan mạnh. "
-              "Màu đỏ = tương quan dương, xanh = tương quan âm.")
-
-    cc_cols = ['sale_price','gross_sqft','building_age','avg_income','amenity_score']
-    cc_lbl  = {'sale_price':'Giá bán','gross_sqft':'Diện tích',
-               'building_age':'Tuổi CT','avg_income':'Thu nhập TB','amenity_score':'Tiện ích'}
-    cc_data = df[cc_cols].dropna()
-    cc_mat  = cc_data.corr()
-    cc_mat.columns = [cc_lbl[c] for c in cc_mat.columns]
-    cc_mat.index   = [cc_lbl[c] for c in cc_mat.index]
-    fig = px.imshow(cc_mat, text_auto='.2f', color_continuous_scale='RdBu_r',
-                    zmin=-1, zmax=1, aspect='equal')
-    clayout(fig, h=320, t=20, b=20)
-    fig.update_layout(coloraxis_colorbar=dict(title='r', len=0.8))
-    st.plotly_chart(fig, width='stretch')
-
-    divider()
-    corr_inc2 = cc_data['sale_price'].corr(cc_data['avg_income'])
-    corr_age2 = cc_data['sale_price'].corr(cc_data['building_age'])
     insight_box(f"""
-    <b>📌 Điều gì kéo giá lên mạnh nhất?</b><br>
-    • <b>Diện tích</b> là yếu tố vật lý quan trọng nhất — tương quan
-      <b>r = {corr_sq:.3f}</b> với giá bán.<br>
-    • <b>Thu nhập bình quân khu vực</b>: r = <b>{corr_inc2:.3f}</b> —
-      sức mua cộng đồng ảnh hưởng trực tiếp đến mặt bằng giá.<br>
-    • <b>Tuổi công trình</b>: r = <b>{corr_age2:.3f}</b>
-      {'(nhà cũ hơn → giá thấp hơn)' if corr_age2 < 0 else '(tương quan dương)'}.<br>
-    • Loại hình <b>{top_bt2_name}</b> có giá/sqft trung vị cao nhất:
-      <b>${top_bt2_ppsf:,.0f}/sqft</b>.
+    <b>💡 Ý nghĩa kinh tế của Biến số DIỆN TÍCH (gross_sqft):</b><br>
+    • Hệ số tương quan: <b>r = +{corr_sq:.2f}</b> (Tương quan thuận rất mạnh).<br>
+    • <b>Giải thích thực tế:</b> Diện tích sàn là yếu tố vật lý đóng vai trò quyết định số 1 tới giá bán. 
+      Căn hộ có diện tích lớn hơn cung cấp không gian sống rộng rãi hơn, nhiều phòng ngủ/phòng tắm hơn. 
+      Mỗi 500 sqft diện tích tăng thêm giúp giá trị tài sản tăng trung bình từ 40% - 60%.
+    """)
+
+    divider()
+
+    # 2. BIẾN SỐ 2: THU NHẬP KHU VỰC (avg_income)
+    section_q("2. Biến số THU NHẬP BÌNH QUÂN KHU VỰC (avg_income) — Mức độ tác động: 📈 MẠNH",
+              "Phân tích tác động của sức mua và mức độ đắt đỏ của dân cư sinh sống tại khu vực đến mặt bằng giá nhà.")
+
+    df_inc = df[df['avg_income'].notna()].copy()
+    corr_inc = df_inc['avg_income'].corr(df_inc['sale_price']) if len(df_inc) >= 20 else 0
+
+    inc_summary = df_inc.groupby('borough_name').agg(
+        avg_inc=('avg_income', 'mean'),
+        med_price=('sale_price', 'median'),
+        med_ppsf=('price_per_sqft', 'median')
+    ).reset_index()
+
+    fig_inc = px.bar(
+        inc_summary, x='borough_name', y='med_price',
+        color='avg_inc', color_continuous_scale='Purples',
+        text=inc_summary['avg_inc'].apply(lambda v: f'Thu nhập TB: ${v:,.0f}'),
+        title="Mặt bằng Giá nhà Trung vị xếp theo Mức Thu nhập Bình quân Khu vực ($)",
+        labels={'borough_name': 'Quận', 'med_price': 'Giá bán trung vị ($)', 'avg_inc': 'Thu nhập TB ($)'}
+    )
+    fig_inc.update_traces(textposition='outside')
+    clayout(fig_inc, h=340, t=40, b=20)
+    fig_inc.update_layout(
+        yaxis=dict(tickformat='$,.0f', automargin=True, title='Giá bán trung vị ($)'),
+        xaxis=dict(automargin=True, title='Quận'),
+        coloraxis_colorbar=dict(title='Thu nhập TB ($)'),
+        title_font=dict(size=13, color='#374151')
+    )
+    st.plotly_chart(fig_inc, width='stretch')
+
+    insight_box(f"""
+    <b>💡 Ý nghĩa kinh tế của Biến số THU NHẬP KHU VỰC (avg_income):</b><br>
+    • Hệ số tương quan: <b>r = +{corr_inc:.2f}</b> (Tương quan thuận mạnh).<br>
+    • <b>Giải thích thực tế:</b> Thu nhập bình quân của dân cư khu vực phản ánh <i>sức mua (purchasing power)</i> 
+      và chất lượng môi trường sống. Khu vực có thu nhập cao (như Manhattan: ~$88K/năm) thường sở hữu hạ tầng cao cấp, 
+      an ninh tốt và trường học chất lượng, dẫn tới nhu cầu mua nhà cao hơn và sẵn sàng trả mức giá áp đảo so với các quận phụ cận.
+    """)
+
+    divider()
+
+    # 3. BIẾN SỐ 3: TUỔI BẤT ĐỘNG SẢN (building_age)
+    section_q("3. Biến số TUỔI CÔNG TRÌNH (building_age) — Mức độ tác động: 📉 YẾU / ÂM",
+              "Phân tích tác động của thời gian vận hành công trình đến giá bán (khấu hao vật lý vs giá trị vị trí).")
+
+    df_age = df[df['building_age'].notna() & df['building_age'].between(0, 120)].copy()
+    corr_age = df_age['building_age'].corr(df_age['sale_price']) if len(df_age) >= 20 else 0
+
+    df_age['age_group'] = pd.cut(
+        df_age['building_age'],
+        bins=[-1, 15, 35, 65, 120],
+        labels=['Mới (<15 năm)', 'Trung bình (15–35 năm)', 'Cũ (35–65 năm)', 'Rất cũ (>65 năm)']
+    )
+    age_sum = df_age.groupby('age_group', observed=True)['sale_price'].median().reset_index()
+
+    fig_age = px.bar(
+        age_sum, x='age_group', y='sale_price',
+        color='sale_price', color_continuous_scale='Reds_r',
+        text=age_sum['sale_price'].apply(fmt_M),
+        title="Giá trung vị bất động sản phân theo Nhóm Tuổi công trình",
+        labels={'age_group': 'Nhóm tuổi', 'sale_price': 'Giá trung vị ($)'}
+    )
+    fig_age.update_traces(textposition='outside')
+    clayout(fig_age, h=320, t=40, b=20)
+    fig_age.update_layout(coloraxis_showscale=False, yaxis=dict(tickformat='$,.0f', automargin=True), title_font=dict(size=13, color='#374151'))
+    st.plotly_chart(fig_age, width='stretch')
+
+    insight_box(f"""
+    <b>💡 Ý nghĩa kinh tế của Biến số TUỔI BẤT ĐỘNG SẢN (building_age):</b><br>
+    • Hệ số tương quan: <b>r = {corr_age:.2f}</b> (Tương quan âm nhẹ).<br>
+    • <b>Giải thích thực tế:</b> Bất động sản mới xây (<15 năm) sở hữu giá bán cao nhất do thiết kế hiện đại và không tốn chi phí sửa chữa. 
+      Công trình cũ có xu hướng giảm giá do <i>khấu hao tài sản (physical depreciation)</i>. Tuy nhiên tại NYC, mối tương quan này khá yếu vì nhiều tòa nhà cổ (>70 năm) tại Manhattan hay Brooklyn Heights nằm ở vị trí đất vàng đắt đỏ và có kiến trúc lịch sử được bảo tồn, bù đắp đáng kể sự suy giảm về tuổi đời.
     """)
 
 # ════════════════════════════════════════════════════════════
@@ -672,8 +1080,7 @@ with tab3:
     st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
 
     section_q("Giá trung bình biến động theo tháng như thế nào — và 6 tháng tới sẽ ra sao?",
-              "Xanh = giá thực tế theo tháng. Cam nét chấm = xu hướng đa thức bậc 2. "
-              "Đỏ ◆ = dự báo 6 tháng tới. Vùng mờ = khoảng tin cậy ±1σ.")
+              "Xanh = giá thực tế từng tháng. Cam đứt = đường xu hướng tổng thể. Đỏ ◆ = dự báo 6 tháng tới.")
 
     ts3 = df.dropna(subset=['sale_date_parsed']).copy()
     ts3['ym'] = ts3['sale_date_parsed'].dt.to_period('M')
@@ -724,33 +1131,15 @@ with tab3:
             marker=dict(size=9, symbol='diamond', color=C_RED,
                         line=dict(color='white', width=1.5)),
             hovertemplate='%{x|%m/%Y}<br>Dự báo: $%{y:,.0f}<extra></extra>'))
-        fig_t.add_vline(x=future_d3[0].timestamp()*1000,
-                        line_dash='dash', line_color=C_GRAY, line_width=1.2,
-                        annotation_text='▶ Bắt đầu dự báo',
-                        annotation_position='top left',
-                        annotation_font=dict(color=C_GRAY, size=11))
-        clayout(fig_t, h=420, t=30, b=20, leg=True)
+        clayout(fig_t, h=420, t=50, b=20, leg=True)
         fig_t.update_layout(
-            xaxis_title='Tháng',
+            title='Xu hướng Giá bán & Dự báo 6 tháng tới',
+            title_font=dict(size=14, color='#374151'),
+            xaxis=dict(title='Tháng', automargin=True),
             yaxis=dict(tickformat='$,.0f', automargin=True, title='Giá trung bình ($)'),
-            legend=dict(orientation='h', y=1.08, x=0, font_size=11),
+            legend=dict(orientation='h', y=1.12, x=0, font_size=11),
             hovermode='x unified')
         st.plotly_chart(fig_t, width='stretch')
-
-        fore_tbl = pd.DataFrame({
-            'Tháng dự báo': [d.strftime('%m/%Y') for d in future_d3],
-            'Giá dự báo':   [f'${v:,.0f}' for v in y_fore3],
-            'Khoảng thấp':  [f'${max(0,v-std3*1.5):,.0f}' for v in y_fore3],
-            'Khoảng cao':   [f'${v+std3*1.5:,.0f}' for v in y_fore3],
-            'Δ vs tháng trước': [
-                f'{(y_fore3[i]/y_fore3[i-1]-1)*100:+.2f}%' if i > 0
-                else f'{(y_fore3[0]/yh3[-1]-1)*100:+.2f}%'
-                for i in range(6)
-            ],
-        })
-        st.dataframe(fore_tbl, width='stretch', hide_index=True)
-    else:
-        st.info("⚠️ Cần ít nhất 4 tháng dữ liệu để vẽ đường xu hướng.")
 
     divider()
     section_q("Thị trường có tính mùa vụ rõ không? Tháng nào sôi động nhất?",
@@ -765,60 +1154,14 @@ with tab3:
         marker_color=[C_RED if t==peak_bar3 else C_BLUE2 for t in mb3['Tháng']],
         text=mb3['Số giao dịch'], texttemplate='%{text:,}', textposition='outside',
         hovertemplate='%{x}<br>%{y:,} GD<extra></extra>'))
-    clayout(fig_m3, h=300, t=50, b=20)
+    clayout(fig_m3, h=300, t=60, b=20)
     fig_m3.update_layout(
-        yaxis=dict(automargin=True, title='Số giao dịch'), xaxis_title='Tháng',
-        uniformtext_minsize=10, uniformtext_mode='hide',
-        annotations=[dict(x=peak_bar3, y=mb3['Số giao dịch'].max(),
-                          text=f"🔴 Cao điểm: {MONTH_FULL.get(peak_m3,'?')}",
-                          showarrow=True, arrowhead=2, arrowcolor=C_RED,
-                          font=dict(color=C_RED, size=11, weight=600),
-                          yshift=22, bgcolor='rgba(255,255,255,0.9)', borderpad=4)])
+        title='Số giao dịch theo Tháng trong năm (Tính mùa vụ)',
+        title_font=dict(size=14, color='#374151'),
+        yaxis=dict(automargin=True, title='Số giao dịch'),
+        xaxis=dict(title='Tháng', automargin=True),
+        uniformtext_minsize=10, uniformtext_mode='hide')
     st.plotly_chart(fig_m3, width='stretch')
-
-    if len(yrs3) >= 2:
-        divider()
-        section_q(f"Giá trung bình thay đổi thế nào từ {yrs3[-2]} sang {yrs3[-1]}?")
-        yoy_b3 = df.groupby(['borough_name','sale_year'])['sale_price'].mean().reset_index()
-        yoy_p3 = yoy_b3.pivot(index='borough_name', columns='sale_year',
-                              values='sale_price').reset_index()
-        if yrs3[-2] in yoy_p3.columns and yrs3[-1] in yoy_p3.columns:
-            yoy_p3['YoY (%)'] = (yoy_p3[yrs3[-1]]/yoy_p3[yrs3[-2]]-1)*100
-            yoy_p3 = yoy_p3.dropna(subset=['YoY (%)']).sort_values('YoY (%)')
-            fig_yoy3 = go.Figure(go.Bar(
-                x=yoy_p3['borough_name'], y=yoy_p3['YoY (%)'],
-                marker_color=[C_GREEN if v>=0 else C_RED for v in yoy_p3['YoY (%)']],
-                text=[f'{v:+.1f}%' for v in yoy_p3['YoY (%)']],
-                textposition='outside',
-                hovertemplate='%{x}<br>Tăng trưởng năm: %{y:+.1f}%<extra></extra>'))
-            clayout(fig_yoy3, h=280, t=40, b=20)
-            fig_yoy3.update_layout(
-                yaxis=dict(tickformat='+.1f', ticksuffix='%', zeroline=True,
-                           zerolinecolor='#d1d5db', automargin=True, title='Thay đổi (%)'),
-                xaxis=dict(automargin=True),
-                uniformtext_minsize=10, uniformtext_mode='hide')
-            st.plotly_chart(fig_yoy3, width='stretch')
-
-    divider()
-    avg_monthly3 = mb3['Số giao dịch'].mean()
-    if y_fore3 is not None and y_h3 is not None:
-        chg3 = (y_fore3[-1]-y_h3[-1])/y_h3[-1]*100
-        dir3 = "📈 tăng" if chg3 > 0 else "📉 giảm"
-        insight_box(f"""
-        <b>📌 Thị trường đang đi về đâu?</b><br>
-        • Giá TB dự kiến <b>{dir3} {abs(chg3):.1f}%</b> trong 6 tháng tới —
-          từ <b>${y_h3[-1]:,.0f}</b> → <b>${y_fore3[-1]:,.0f}</b>.<br>
-        • Tháng sôi động nhất: <b>{MONTH_FULL.get(peak_m3,'?')}</b>
-          ({monthly_cnt3.max():,} GD) — cao hơn trung bình <b>{monthly_cnt3.max()/avg_monthly3:.1f}×</b>.<br>
-        • Tăng trưởng YoY (trung vị): <b>{yoy_pct3:+.1f}%</b>.<br>
-        • ⚠️ Dự báo polynomial — mang tính tham khảo, không tính lãi suất / chính sách vĩ mô.
-        """)
-    else:
-        insight_box(f"""
-        <b>📌 Nhận xét xu hướng:</b><br>
-        • Tháng sôi động nhất: <b>{MONTH_FULL.get(peak_m3,'?')}</b> ({monthly_cnt3.max():,} GD).<br>
-        • Tăng trưởng YoY (trung vị): <b>{yoy_pct3:+.1f}%</b>.
-        """)
 
 # ════════════════════════════════════════════════════════════
 # TAB 4 — DỰ BÁO & MÔ HÌNH ML
@@ -829,8 +1172,7 @@ with tab4:
     padding:18px 24px;color:#fff;margin-bottom:22px;
     box-shadow:0 6px 24px rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.07)'>
     <b style='font-size:15px;letter-spacing:-0.3px'>🤖 Mô hình Machine Learning dự báo giá như thế nào?</b><br>
-    <span style='font-size:12px;opacity:0.75'>So sánh hiệu suất mô hình, yếu tố quan trọng
-    và công cụ ước tính giá tương tác.</span>
+    <span style='font-size:12px;opacity:0.75'>So sánh hiệu suất mô hình, yếu tố quan trọng và công cụ ước tính giá tương tác.</span>
     </div>
     """, unsafe_allow_html=True)
 
@@ -841,13 +1183,15 @@ with tab4:
     else:
         rf4 = ml4.get('Random Forest', {}); lr4 = ml4.get('Linear Regression', {})
         m1,m2,m3,m4 = st.columns(4)
-        m1.metric("R² (Rừng ngẫu nhiên)",    f"{rf4.get('R2',0):.4f}",
-                  delta=f"+{rf4.get('R2',0)-lr4.get('R2',0):.4f} so với Hồi quy tuyến tính")
-        m2.metric("Sai số tuyệt đối (SAL)", f"${rf4.get('MAE',0):,.0f}")
-        m3.metric("Căn bậc hai sai số bình phương", f"${rf4.get('RMSE',0):,.0f}")
         acc4 = max(0,(1-rf4.get('MAE',0)/df['sale_price'].median())*100)
-        m4.metric("Độ chính xác ước tính", f"{acc4:.1f}%")
-        st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
+        mape4 = rf4.get('MAPE', None)
+        m1.metric("Độ chính xác ước tính", f"{acc4:.1f}%", delta="Random Forest tốt nhất")
+        m2.metric("Sai số trung bình (MAE)", f"${rf4.get('MAE',0):,.0f}")
+        m3.metric("R² — Mức giải thích", f"{rf4.get('R2',0)*100:.1f}%")
+        if mape4:
+            m4.metric("Lệch giá TB (%)", f"{mape4:.1f}%")
+        else:
+            m4.metric("RMSE", f"${rf4.get('RMSE',0):,.0f}")
 
         section_q("Mô hình nào dự báo chính xác hơn?",
                   "R² càng gần 1, MAE/RMSE càng thấp = tốt hơn. So sánh trên cùng tập kiểm tra.")
@@ -869,12 +1213,15 @@ with tab4:
                 imp4s = imp4s.sort_values('Importance')
                 fig_i = px.bar(imp4s, x='Importance', y='Tên', orientation='h',
                                color='Importance', color_continuous_scale='Blues',
-                               text=imp4s['Importance'].apply(lambda v: f'{v*100:.1f}%'))
+                               text=imp4s['Importance'].apply(lambda v: f'{v*100:.1f}%'),
+                               labels={'Importance': 'Mức độ quan trọng', 'Tên': 'Yếu tố'},
+                               title='Mức độ quan trọng của từng yếu tố (Random Forest)')
                 fig_i.update_traces(textposition='auto')
-                clayout(fig_i, h=360, t=10, b=10, r=80)
+                clayout(fig_i, h=360, t=40, b=10, r=80)
                 fig_i.update_layout(coloraxis_showscale=False,
-                                    xaxis=dict(tickformat='.0%', automargin=True),
-                                    yaxis=dict(automargin=True))
+                                    title_font=dict(size=13, color='#374151'),
+                                    xaxis=dict(tickformat='.0%', automargin=True, title='Mức độ quan trọng'),
+                                    yaxis=dict(automargin=True, title=''))
                 st.plotly_chart(fig_i, width='stretch')
         with ci2:
             section_q("Dự báo sát thực tế đến mức nào?","")
@@ -883,146 +1230,20 @@ with tab4:
                 fig_av4 = px.scatter(pp4, x='Actual', y='Predicted', opacity=0.4,
                                      color_discrete_sequence=[C_BLUE2],
                                      labels={'Actual':'Giá thực ($)','Predicted':'Giá dự báo ($)'},
+                                     title='Dự báo vs Thực tế — Độ chính xác mô hình Random Forest',
                                      trendline='ols')
+                # Đặt tên cho OLS trendline trace để tránh 'undefined' trong legend
+                for trace in fig_av4.data:
+                    if hasattr(trace, 'name') and trace.name and 'OLS' in str(trace.name):
+                        trace.name = 'Xu hướng OLS'
                 vm4 = max(pred_df4['Actual'].max(), pred_df4['Predicted'].max())
                 fig_av4.add_trace(go.Scatter(x=[0,vm4], y=[0,vm4], mode='lines',
                                              name='Lý tưởng (y=x)',
                                              line=dict(color=C_RED, dash='dash', width=1.5)))
-                clayout(fig_av4, h=360, t=10, b=10, leg=True)
+                clayout(fig_av4, h=360, t=40, b=10, leg=True)
                 fig_av4.update_layout(
-                    xaxis=dict(tickformat='$,.0f', automargin=True),
-                    yaxis=dict(tickformat='$,.0f', automargin=True),
+                    title_font=dict(size=13, color='#374151'),
+                    xaxis=dict(tickformat='$,.0f', automargin=True, title='Giá thực ($)'),
+                    yaxis=dict(tickformat='$,.0f', automargin=True, title='Giá dự báo ($)'),
                     legend=dict(font_size=11))
                 st.plotly_chart(fig_av4, width='stretch')
-
-        seg4 = None
-        if pred_df4 is not None:
-            divider()
-            section_q("Mô hình chính xác hơn ở phân khúc giá nào?",
-                      "Sai số thấp = tin cậy hơn. Phân khúc cao cấp thường khó dự báo hơn.")
-            err4 = pred_df4.copy()
-            err4['err_pct'] = (err4['Predicted']-err4['Actual']).abs()/err4['Actual']*100
-            bins4 = [0,200_000,500_000,1_000_000,2_000_000,float('inf')]
-            lb4   = ['< $200K','$200K–$500K','$500K–$1M','$1M–$2M','> $2M']
-            err4['Phân khúc'] = pd.cut(err4['Actual'], bins=bins4, labels=lb4)
-            seg4 = (err4.groupby('Phân khúc',observed=True)['err_pct']
-                    .agg(Sai_so='mean',N='count').reset_index())
-            seg4.columns = ['Phân khúc','Sai số TB (%)','Số mẫu']
-
-            sc1, sc2 = st.columns(2)
-            with sc1:
-                fig_se = px.bar(seg4, x='Phân khúc', y='Sai số TB (%)',
-                                color='Sai số TB (%)', color_continuous_scale='RdYlGn_r',
-                                text=seg4['Sai số TB (%)'].apply(lambda v: f'{v:.1f}%'),
-                                title="Sai số trung bình theo phân khúc giá")
-                fig_se.update_traces(textposition='outside')
-                clayout(fig_se, h=280, t=40, b=20)
-                fig_se.update_layout(coloraxis_showscale=False, yaxis=dict(automargin=True),
-                                     uniformtext_minsize=10, uniformtext_mode='hide',
-                                     title_font=dict(size=13,color='#374151'))
-                st.plotly_chart(fig_se, width='stretch')
-            with sc2:
-                fig_sn = px.bar(seg4, x='Phân khúc', y='Số mẫu',
-                                color='Số mẫu', color_continuous_scale='Blues',
-                                text='Số mẫu', title="Số mẫu kiểm tra theo phân khúc")
-                fig_sn.update_traces(texttemplate='%{text:,}', textposition='outside')
-                clayout(fig_sn, h=280, t=40, b=20)
-                fig_sn.update_layout(coloraxis_showscale=False, yaxis=dict(automargin=True),
-                                     uniformtext_minsize=10, uniformtext_mode='hide',
-                                     title_font=dict(size=13,color='#374151'))
-                st.plotly_chart(fig_sn, width='stretch')
-
-        divider()
-        section_q("Ước tính giá theo thông số tùy chỉnh",
-                  "Điều chỉnh các thanh trượt để xem giá ước tính dựa trên mặt bằng thị trường "
-                  "và mức độ ảnh hưởng đặc trưng của Rừng ngẫu nhiên (Random Forest).")
-
-        df_v4 = df[df['gross_sqft'].notna() &
-                   df['sale_price'].between(df['sale_price'].quantile(0.05),
-                                            df['sale_price'].quantile(0.95))].copy()
-        el, er = st.columns([3,2])
-        with el:
-            if len(df_v4) > 0:
-                inp_sq = st.slider("🏗️ Diện tích tổng (sqft)", 100,
-                                   int(df_v4['gross_sqft'].quantile(0.95)),
-                                   int(df_v4['gross_sqft'].median()), step=50)
-                inp_ag = st.slider("🕰️ Tuổi công trình (năm)", 0, 120,
-                                   int(df_v4['building_age'].median()), step=1)
-                inp_am = st.slider("🎯 Điểm tiện ích (0–10)", 0.0, 10.0,
-                                   round(float(df_v4['amenity_score'].median()),1), step=0.1)
-                inp_in = st.slider("💵 Thu nhập TB ($)",
-                                   int(df_v4['avg_income'].min()),
-                                   int(df_v4['avg_income'].max()),
-                                   int(df_v4['avg_income'].median()), step=1000)
-                inp_di = st.slider("📍 KC trung tâm (km)", 0.0,
-                                   float(df_v4['dist_center'].max()),
-                                   round(float(df_v4['dist_center'].median()),1), step=0.5)
-        with er:
-            if len(df_v4) > 0 and imp4 is not None:
-                imp_d4 = dict(zip(imp4['Feature'], imp4['Importance']))
-                def n4(v,c):
-                    mn,mx = df_v4[c].min(), df_v4[c].max()
-                    return (v-mn)/(mx-mn+1e-9) if mx>mn else 0.5
-                sc4 = (n4(inp_sq,'gross_sqft')    * imp_d4.get('gross_sqft',0) +
-                       (1-n4(inp_ag,'building_age'))* imp_d4.get('building_age',0) +
-                       n4(inp_am,'amenity_score')  * imp_d4.get('amenity_score',0) +
-                       n4(inp_in,'avg_income')      * imp_d4.get('avg_income',0) +
-                       (1-n4(inp_di,'dist_center')) * imp_d4.get('dist_center',0))
-                tw4 = sum(imp_d4.get(f,0) for f in
-                          ['gross_sqft','building_age','amenity_score','avg_income','dist_center'])
-                sn4  = sc4/(tw4+1e-9)
-                mp4  = df_v4['sale_price'].mean()
-                est4 = mp4*0.5 + sn4*(mp4*2.5-mp4*0.5)
-                mae4 = rf4.get('MAE',393795)
-                d4   = (est4-mp4)/mp4*100
-                dc4  = C_GREEN if d4>=0 else C_RED
-                st.markdown(f"""
-                <div style='background:linear-gradient(135deg,#0f172a,#1e3a8a);
-                border-radius:14px;padding:22px 20px;text-align:center;color:#fff;margin-top:8px'>
-                    <div style='font-size:11px;opacity:0.5;text-transform:uppercase;
-                    letter-spacing:.1em;margin-bottom:4px'>Giá ước tính</div>
-                    <div style='font-size:32px;font-weight:900;letter-spacing:-1px'>${est4:,.0f}</div>
-                    <div style='font-size:11px;opacity:0.45;margin:6px 0 2px'>Khoảng dao động</div>
-                    <div style='font-size:14px;font-weight:600'>${max(0,est4-mae4):,.0f} – ${est4+mae4:,.0f}</div>
-                    <hr style='border-color:rgba(255,255,255,0.12);margin:12px 0'>
-                    <div style='font-size:11px;opacity:0.5'>So với giá TB thị trường</div>
-                    <div style='font-size:20px;font-weight:700;color:{dc4}'>{d4:+.1f}%</div>
-                    <div style='font-size:10px;opacity:0.3;margin-top:8px'>
-                        ⚠️ Ước tính tham khảo · MAE ≈ ${mae4:,.0f}
-                    </div>
-                </div>""", unsafe_allow_html=True)
-                fig_g4 = go.Figure(go.Indicator(
-                    mode='gauge+number', value=est4/1e6,
-                    number=dict(prefix='$',suffix='M',font_size=18),
-                    gauge=dict(
-                        axis=dict(range=[0, mp4*2.5/1e6]),
-                        bar=dict(color=C_BLUE),
-                        steps=[dict(range=[0,mp4*0.5/1e6],color='#f0fdf4'),
-                               dict(range=[mp4*0.5/1e6,mp4/1e6],color='#dcfce7'),
-                               dict(range=[mp4/1e6,mp4*2.5/1e6],color='#fef3c7')],
-                        threshold=dict(line=dict(color=C_RED,width=2),
-                                       thickness=0.75, value=mp4/1e6)),
-                    title=dict(text='Giá (triệu $)',font_size=12)))
-                fig_g4.update_layout(height=190, margin=dict(t=28,b=8,l=18,r=18))
-                st.plotly_chart(fig_g4, width='stretch')
-
-        divider()
-        top_f4  = imp4['Feature'].iloc[imp4['Importance'].argmax()] if imp4 is not None else 'N/A'
-        top_fl4 = FEATURE_LABELS.get(top_f4, top_f4)
-        top_fi4 = imp4['Importance'].max() if imp4 is not None else 0
-        bs4 = seg4.sort_values('Sai số TB (%)').iloc[0]  if seg4 is not None and len(seg4)>0 else None
-        ws4 = seg4.sort_values('Sai số TB (%)').iloc[-1] if seg4 is not None and len(seg4)>0 else None
-        seg_insight = ""
-        if bs4 is not None:
-            seg_insight = (f"• Chính xác nhất tại phân khúc <b>{bs4['Phân khúc']}</b> "
-                           f"(sai số TB {bs4['Sai số TB (%)']:.1f}%), kém nhất tại "
-                           f"<b>{ws4['Phân khúc']}</b> ({ws4['Sai số TB (%)']:.1f}%).")
-        insight_box(f"""
-        <b>📌 Mô hình dự báo nói gì?</b><br>
-        • Rừng ngẫu nhiên (Random Forest) giải thích <b>{rf4.get('R2',0)*100:.1f}%</b> biến động giá
-          (R² = {rf4.get('R2',0):.4f}), tốt hơn Hồi quy tuyến tính
-          <b>{(rf4.get('R2',0)-lr4.get('R2',0))*100:.1f} điểm phần trăm</b>.<br>
-        • Yếu tố quyết định nhất: <b>{top_fl4}</b> ({top_fi4*100:.1f}% mức độ ảnh hưởng).<br>
-        {seg_insight}<br>
-        • Hướng cải thiện: thêm tọa độ GPS, điểm tiện ích lân cận, thử <b>XGBoost / LightGBM</b>.
-        """)

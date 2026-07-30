@@ -1,0 +1,196 @@
+Number of paragraphs: 193
+Number of tables: 0
+
+P0: [None] BÁO CÁO PHÂN TÍCH DASHBOARD
+P1: [None] THỊ TRƯỜNG BẤT ĐỘNG SẢN NEW YORK CITY
+P2: [None] 
+P3: [None] Loại báo cáo: Data Analytics Report
+P4: [None] Thị trường: New York City Real Estate
+P5: [None] Ngày phát hành: 29/06/2026
+P6: [None] Người phân tích: Data Analytics Team
+P7: [None] 
+P8: [Heading 1] PHẦN I: PHÂN TÍCH CHI TIẾT TỪNG BIỂU ĐỒ
+P9: [None] 
+P10: [Heading 2] BIỂU ĐỒ 1 — Tổng quan KPI thị trường
+P11: [None] 
+P12: [None] Hình 1: Dashboard KPI tổng quan — Tổng giao dịch, Giá trung vị, Giá/sqft, Tổng giá trị, Tăng trưởng YoY và tỷ lệ giao dịch ≥$1M
+P13: [None] 1. Mục đích: Cung cấp cái nhìn tổng quan nhanh về quy mô và sức khỏe thị trường BĐS NYC.
+P14: [None] 2. Dữ liệu thể hiện: 6 chỉ số vĩ mô: Tổng giao dịch (44,649), Giá trung vị ($0.93M), Giá/sqft trung vị ($518), Tổng giá trị thị trường ($54.5B), Tăng trưởng YoY (+4.3%), và tỷ lệ giao dịch ≥$1M (42.9%).
+P15: [None] 3. Xu hướng nổi bật: Thị trường đang trong chu kỳ tăng trưởng ổn định với mức +4.3% YoY — không bùng nổ nhưng tích cực và bền vững.
+P16: [None] 4. Giá trị nổi bật: Tổng giá trị thị trường $54.5 tỷ USD. Đặc biệt, tỷ lệ giao dịch ≥$1M chiếm tới 42.9% — gần một nửa thị trường thuộc phân khúc cao cấp.
+P17: [None] 5. Ý nghĩa kinh doanh: Thị trường BĐS NYC có quy mô khổng lồ và đang trong trạng thái tăng trưởng lành mạnh. Giá trung vị $0.93M phản ánh đây là thị trường thuộc top đắt nhất nước Mỹ.
+P18: [None] 6. Insight: Tỷ lệ 42.9% giao dịch trên $1M cho thấy NYC không phải thị trường đại trà — chiến lược kinh doanh, marketing và định giá cần được tối ưu riêng cho phân khúc cao cấp. Đây là thị trường của những người mua có tài chính mạnh.
+P19: [None] 
+P20: [Heading 2] BIỂU ĐỒ 2 — Số giao dịch và Giá trung vị theo Borough
+P21: [None] 
+P22: [None] Hình 2: So sánh thanh khoản (số giao dịch) và mặt bằng giá giữa 5 quận của NYC
+P23: [None] 1. Mục đích: So sánh thanh khoản (số giao dịch) và mặt bằng giá giữa 5 quận của NYC.
+P24: [None] 2. Dữ liệu thể hiện: Hai biểu đồ thanh nằm ngang — trái là số giao dịch, phải là giá trung vị — phân tách theo 5 borough: Bronx (3,019 GD / $0.79M), Staten Island (4,098 GD / $0.73M), Brooklyn (11,527 GD / $1.15M), Manhattan (12,477 GD / $1.29M), Queens (13,528 GD / $0.79M).
+P25: [None] 3. Xu hướng nổi bật: Có sự phân hóa rõ rệt giữa thanh khoản và giá. Queens dẫn đầu về số lượng giao dịch (13,528) nhưng chỉ có giá trung vị $0.79M. Manhattan đứng thứ hai về giao dịch (12,477) nhưng dẫn đầu về giá ($1.29M).
+P26: [None] 4. Giá trị nổi bật: Manhattan có giá gấp 1.76 lần Staten Island ($1.29M vs $0.73M). Bronx có số giao dịch thấp nhất (3,019) — thanh khoản kém nhất toàn thị trường.
+P27: [None] 5. Ý nghĩa kinh doanh: Queens là thị trường đại chúng với thanh khoản cao; Manhattan là thị trường cao cấp với giá trị tài sản lớn. Hai phân khúc này phục vụ hai tệp khách hàng hoàn toàn khác nhau.
+P28: [None] 6. Insight: Nhà đầu tư tìm kiếm dòng tiền nên nhắm Queens/Brooklyn (thanh khoản cao, giá vừa phải). Nhà đầu tư tích sản dài hạn, trú trọng giá trị tài sản nên nhắm Manhattan. Bronx là vùng trũng về cả hai tiêu chí — cần nghiên cứu thêm về cấu trúc dân số và hạ tầng.
+P29: [None] 
+P30: [Heading 2] BIỂU ĐỒ 3 — Phân bố giá theo Borough (Box Plot)
+P31: [None] 
+P32: [None] Hình 3: Box plot phân bố giá bán tại 5 borough — Manhattan, Brooklyn, Queens, Bronx, Staten Island
+P33: [None] 1. Mục đích: Phân tích sự phân bố và độ phân tán của giá bán trong từng quận, không chỉ dừng lại ở giá trung bình.
+P34: [None] 2. Dữ liệu thể hiện: Box plot với đường trung vị, hộp tứ phân vị (IQR 25–75%), và râu whisker thể hiện độ rải rộng dữ liệu cho cả 5 borough.
+P35: [None] 3. Xu hướng nổi bật: Manhattan và Brooklyn có độ phân tán cực lớn — khoảng giá chạy từ dưới $500K đến trên $3M. Queens, Bronx, Staten Island có phân bố nhỏ gọn và thấp hơn đáng kể.
+P36: [None] 4. Giá trị nổi bật: Manhattan có hộp IQR trải rộng nhất, cho thấy sự không đồng nhất cao về giá — từ căn hộ phổ thông đến siêu cao cấp đều tồn tại trong cùng một borough.
+P37: [None] 5. Ý nghĩa kinh doanh: Manhattan không phải thị trường đồng nhất. Các agent/broker cần chiến lược phân tầng rõ ràng thay vì một chiến lược chung cho toàn borough.
+P38: [None] 6. Insight: Độ phân tán lớn ở Manhattan phản ánh sự hiện diện của cả phân khúc bình dân lẫn ultra-luxury. Đây là cơ hội cho các sản phẩm tài chính nhắm vào từng tầng giá riêng biệt. Staten Island có phân bố thấp và hẹp nhất — đây là thị trường ổn định, rủi ro thấp nhưng tiềm năng tăng giá hạn chế.
+P39: [None] 
+P40: [Heading 2] BIỂU ĐỒ 4 — Cơ cấu loại hình BĐS và Phân bố giá
+P41: [None] 
+P42: [None] Hình 4: Donut chart cơ cấu loại hình và box plot phân bố giá theo loại hình (top 6)
+P43: [None] 1. Mục đích: Hiểu cấu trúc thị trường theo loại sản phẩm BĐS và so sánh mặt bằng giá giữa các loại.
+P44: [None] 2. Dữ liệu thể hiện: Donut chart thể hiện tỷ trọng: Family Dwellings 43.5%, Elevator Apartments 41.6%, Walkup Apartments 8.73%, 2-10 Unit Residential 2.37%, Condo Coops 1.75%, Class 1 Condos và box plot so sánh giá bán theo 6 loại hình.
+P45: [None] 3. Xu hướng nổi bật: Thị trường tập trung cao độ vào 2 loại hình chính chiếm gần 85% tổng giao dịch. Các loại hình còn lại (Walkup, Condo Coops...) là phân khúc thứ cấp.
+P46: [None] 4. Giá trị nổi bật: Condo Coops có giá trung vị cao và phân bố rộng — đây là loại hình cao cấp nhất về giá. Family Dwellings và Elevator Apartments có giá trung vị quanh $1M, phân bố tương đồng.
+P47: [None] 5. Ý nghĩa kinh doanh: Sự chi phối của Family Dwellings phản ánh nhu cầu nhà ở thực tế (owner-occupied) mạnh hơn nhu cầu đầu tư thuần túy. Tổng giá trị $54.46 tỷ USD với 42.9% giao dịch ≥$1M xác nhận xu hướng cao cấp hóa.
+P48: [None] 6. Insight: Dù Condo Coops chiếm thị phần nhỏ (~2%), đây lại là phân khúc giá cao và biến động nhất. Các doanh nghiệp phát triển BĐS nên cân nhắc tập trung vào Family Dwellings (khối lượng lớn, ổn định) hoặc Condo Coops (biên lợi nhuận cao hơn, rủi ro cao hơn) tùy theo khẩu vị rủi ro.
+P49: [None] 
+P50: [Heading 2] BIỂU ĐỒ 5 — Top khu vực theo số giao dịch và giá/sqft
+P51: [None] 
+P52: [None] Hình 5: Top 15 khu vực sôi động nhất (trái) và Top 15 khu vực giá/sqft cao nhất (phải)
+P53: [None] 1. Mục đích: Xác định các khu vực "nóng" nhất thị trường về thanh khoản lẫn mặt bằng giá theo sqft.
+P54: [None] 2. Dữ liệu thể hiện: Hai biểu đồ thanh nằm ngang — trái: top 15 khu vực nhiều giao dịch nhất; phải: top 15 khu vực có giá/sqft trung vị cao nhất.
+P55: [None] 3. Xu hướng nổi bật: Có sự phân ly rõ rệt giữa hai danh sách. Các khu vực có giao dịch nhiều nhất (Flushing-North: 1,631 GD) không trùng với các khu vực đắt nhất về giá/sqft (Tribeca: $1,164/sqft).
+P56: [None] 4. Giá trị nổi bật: Tribeca dẫn đầu giá/sqft với $1,164 — cao hơn 29% so với vị trí thứ hai. Flushing-North (Queens) là khu vực có số giao dịch cao nhất (1,631). Các khu vực giá cao nhất đều thuộc Manhattan và Brooklyn.
+P57: [None] 5. Ý nghĩa kinh doanh: Tribeca là "địa chỉ vàng" về giá trị trên từng sqft. Flushing-North là động cơ thanh khoản của Queens — có thể liên quan đến cộng đồng dân cư châu Á đông đảo và hạ tầng phát triển.
+P58: [None] 6. Insight: Các khu vực có giá/sqft cao nhất đều tập trung ở Manhattan và Brooklyn, gợi ý rằng hạ tầng, tiện ích đô thị và vị trí trung tâm là yếu tố định giá mạnh hơn số lượng giao dịch. Nhà đầu tư nên phân biệt giữa "thị trường thanh khoản" (Queens) và "thị trường giá trị" (Tribeca/Manhattan).
+P59: [None] 
+P60: [Heading 2] BIỂU ĐỒ 6 — Diện tích và Giá bán (Scatter Plot)
+P61: [None] 
+P62: [None] Hình 6: Scatter plot — Diện tích trung vị (sqft) vs Giá trung vị ($). Pearson r = 0.451, n = 31,275
+P63: [None] 1. Mục đích: Kiểm chứng mối quan hệ giữa diện tích (sqft) và giá bán — liệu diện tích có thực sự là yếu tố giải thích giá không?
+P64: [None] 2. Dữ liệu thể hiện: Scatter plot với dữ liệu được nhóm theo khoảng 200 sqft. Mỗi điểm = giá trung vị nhóm. Kích thước điểm = số lượng giao dịch trong nhóm. Pearson r = 0.451, n = 31,275.
+P65: [None] 3. Xu hướng nổi bật: Quan hệ tuyến tính dương rõ ràng — diện tích tăng thì giá tăng theo. Đường xu hướng tuyến tính fit khá tốt, đặc biệt với các nhóm diện tích trung bình (1,000–2,500 sqft).
+P66: [None] 4. Giá trị nổi bật: Nhóm 1,500 sqft có kích thước điểm lớn nhất — đây là khoảng diện tích phổ biến nhất thị trường. Dải giá từ ~$400K (500 sqft) đến ~$1.4M (3,300 sqft).
+P67: [None] 5. Ý nghĩa kinh doanh: r = 0.451 là tương quan trung bình đến khá — diện tích giải thích được khoảng 20% sự biến động giá (R² ≈ 0.20). Điều này có nghĩa là 80% biến động giá còn lại đến từ các yếu tố khác.
+P68: [None] 6. Insight: Diện tích là yếu tố cần nhưng chưa đủ để định giá. Vị trí, loại hình, tiện ích, tầng, view, và tuổi công trình đóng vai trò bổ sung quan trọng. Mô hình định giá chỉ dựa trên sqft sẽ có sai số rất lớn — đặc biệt ở phân khúc trên $2M.
+P69: [None] 
+P70: [Heading 2] BIỂU ĐỒ 7 — Giá/sqft theo loại hình (Violin Plot)
+P71: [None] 
+P72: [None] Hình 7: Violin plot kết hợp box plot — Giá/sqft theo 5 loại hình phổ biến nhất. Loại bỏ outlier >$5,000/sqft
+P73: [None] 1. Mục đích: So sánh mật độ phân phối giá/sqft giữa 5 loại hình BĐS phổ biến nhất.
+P74: [None] 2. Dữ liệu thể hiện: Violin plot kết hợp box plot cho Store Buildings ($906/sqft), Condo Coops ($555), Family Dwellings ($536), Elevator Apartments ($440), Walkup Apartments ($404). Loại bỏ outlier >$5,000/sqft.
+P75: [None] 3. Xu hướng nổi bật: Store Buildings có giá/sqft cao vượt trội so với tất cả loại hình còn lại, và đồng thời có phân bố rộng nhất — biến động cực cao. Walkup Apartments là loại có giá/sqft thấp nhất và phân bố hẹp nhất.
+P76: [None] 4. Giá trị nổi bật: Store Buildings trung vị $906/sqft — gấp 2.24 lần Walkup Apartments ($404/sqft). Family Dwellings có outlier cực đoan lên đến $4,000+/sqft (phần đuôi dài phía trên violin).
+P77: [None] 5. Ý nghĩa kinh doanh: Store Buildings (thương mại hỗn hợp) đem lại giá trị cao nhất theo diện tích, phù hợp với nhà đầu tư tìm kiếm lợi suất cao. Tuy nhiên, độ biến động lớn đi kèm rủi ro cao hơn.
+P78: [None] 6. Insight: Sự hiện diện của mixed-use (Store Buildings) trong top giá/sqft phản ánh xu hướng phát triển đô thị tích hợp thương mại – dân cư của NYC. Nhà đầu tư và developer nên xem xét chuyển đổi Walkup Apartments (giá thấp nhất) sang mô hình mixed-use hoặc cải tạo thành Elevator Apartments để tăng giá trị.
+P79: [None] 
+P80: [Heading 2] BIỂU ĐỒ 8 — Ma trận tương quan (Correlation Heatmap)
+P81: [None] 
+P82: [None] Hình 8: Heatmap ma trận tương quan Pearson (r) giữa 5 biến: Giá bán, Diện tích, Tuổi CT, Thu nhập TB, Tiện ích
+P83: [None] 1. Mục đích: Xác định các yếu tố có tương quan thống kê mạnh nhất với giá bán BĐS.
+P84: [None] 2. Dữ liệu thể hiện: Ma trận 5×5 với các biến: Giá bán, Diện tích, Tuổi CT, Thu nhập TB, Tiện ích. Màu đỏ = tương quan dương, xanh = tương quan âm, cường độ màu = mức độ tương quan.
+P85: [None] 3. Xu hướng nổi bật: Diện tích có tương quan dương mạnh nhất với giá (r = 0.50). Tuổi công trình có tương quan âm với giá (r = -0.14) — công trình cũ thường rẻ hơn. Thu nhập TB và Tiện ích có tương quan cao với nhau (r = 0.79) — multicollinearity đáng lưu ý.
+P86: [None] 4. Giá trị nổi bật: r = 0.79 giữa Thu nhập TB và Tiện ích là tương quan rất mạnh — gợi ý rằng các khu vực giàu hơn đồng thời có nhiều tiện ích hơn, tạo hiệu ứng cộng hưởng lên giá nhà.
+P87: [None] 5. Ý nghĩa kinh doanh: Thu nhập TB và Tiện ích không nên dùng đồng thời trong cùng một mô hình hồi quy vì sẽ gây ra đa cộng tuyến. Nên chọn một trong hai hoặc tạo biến tổng hợp.
+P88: [None] 6. Insight: Thị trường BĐS NYC phản ánh bất bình đẳng không gian: khu giàu → nhiều tiện ích → giá đất cao → càng thu hút người giàu → vòng lặp tự củng cố. Tuổi công trình ảnh hưởng tiêu cực đến giá — đây là cơ hội cho thị trường cải tạo và nâng cấp BĐS cũ (renovation plays).
+P89: [None] 
+P90: [Heading 2] BIỂU ĐỒ 9 — Tổng quan xu hướng thị trường (KPI Cards)
+P91: [None] 
+P92: [None] Hình 9: KPI cards tóm tắt xu hướng thị trường — YoY Growth, Giao dịch 2026, Tháng cao điểm GD, Amenity Score TB
+P93: [None] 1. Mục đích: Tóm tắt nhanh 4 chỉ số xu hướng thị trường then chốt dưới dạng KPI card.
+P94: [None] 2. Dữ liệu thể hiện: 4 KPI: Tăng trưởng YoY (trung vị) +4.3%, Giao dịch năm 2026: 9,527, Tháng cao điểm GD: Tháng 7, Amenity Score TB: 2.5/10.
+P95: [None] 3. Xu hướng nổi bật: Thị trường 2026 ghi nhận 9,527 giao dịch (tính đến thời điểm báo cáo). Tháng 7 là đỉnh mùa vụ — nhất quán với dữ liệu lịch sử.
+P96: [None] 4. Giá trị nổi bật: Amenity Score TB chỉ 2.5/10 — đây là điểm số thấp đáng ngạc nhiên cho một thị trường lớn như NYC. Tăng trưởng +4.3% YoY là mức bền vững, không bong bóng.
+P97: [None] 5. Ý nghĩa kinh doanh: Amenity Score thấp phản ánh sự chênh lệch lớn giữa các khu vực trong thành phố về chất lượng tiện ích. Đây là chỉ báo rằng một số khu vực đang underserved về hạ tầng.
+P98: [None] 6. Insight: Các khu vực vượt mức điểm Amenity Score TB (>2.5/10) sẽ được định giá premium cao hơn nhiều. Đây là dư địa phát triển và đầu tư hạ tầng tại các khu vực điểm thấp như Bronx và Staten Island.
+P99: [None] 
+P100: [Heading 2] BIỂU ĐỒ 10 — Xu hướng giá theo tháng và Dự báo 6 tháng
+P101: [None] 
+P102: [None] Hình 10: Xu hướng giá TB thực tế (xanh), đa thức bậc 2 (cam), và dự báo 6 tháng (đỏ) với khoảng tin cậy ±1σ
+P103: [None] 1. Mục đích: Theo dõi xu hướng giá trung bình theo tháng từ lịch sử và dự báo 6 tháng tiếp theo (đến 09/2026).
+P104: [None] 2. Dữ liệu thể hiện: Line chart với 4 series: Giá TB thực tế (xanh), Xu hướng đa thức bậc 2 (cam nét chấm), Dự báo 6 tháng (đỏ nét đứt), Khoảng tin cậy ±1σ (vùng mờ hồng). Dữ liệu lịch sử từ Mar 2025 đến Mar 2026; dự báo từ Apr–Sep 2026.
+P105: [None] 3. Xu hướng nổi bật: Giá thực tế dao động trong biên $1.15M–$1.28M trong giai đoạn lịch sử với xu hướng cong lên dần theo đa thức bậc 2. Dự báo cho thấy đường giá tăng tốc mạnh trong 6 tháng tới, đạt $1.48M vào tháng 9/2026 (+16.3%).
+P106: [None] 4. Giá trị nổi bật: Tháng 11/2025 ghi nhận đáy giá ($1.15M) — thấp nhất trong toàn bộ giai đoạn quan sát. Sau đó giá phục hồi mạnh. Khoảng tin cậy dự báo tháng 9/2026: [$1.43M–$1.52M].
+P107: [None] 5. Ý nghĩa kinh doanh: Nếu dự báo đúng, thị trường sẽ tăng thêm ~16.3% trong 6 tháng — mức tăng phi thường có thể thu hút dòng vốn đầu cơ lớn vào thị trường.
+P108: [None] 6. Insight: Cần thận trọng với dự báo polynomial — loại mô hình này có xu hướng over-extrapolate khi kéo dài ra ngoài phạm vi dữ liệu gốc. Mức tăng 16.3% trong 6 tháng là kịch bản lạc quan và không tính đến rủi ro vĩ mô (lãi suất, chính sách). Nên sử dụng đây như một kịch bản tham khảo, không phải dự báo chắc chắn.
+P109: [None] 
+P110: [Heading 2] BIỂU ĐỒ 11 — Bảng dự báo giá theo tháng và Mùa vụ giao dịch
+P111: [None] 
+P112: [None] Hình 11: Bảng dự báo tháng (04–09/2026) và biểu đồ mùa vụ giao dịch theo tháng trong năm
+P113: [None] 1. Mục đích: Chi tiết hóa dự báo tháng-theo-tháng với khoảng tin cậy; xác định tính mùa vụ của thị trường.
+P114: [None] 2. Dữ liệu thể hiện: Bảng dự báo từ 04/2026 đến 09/2026 với Giá dự báo, Khoảng thấp, Khoảng cao, và % thay đổi so với tháng trước. Bar chart 12 tháng thể hiện số lượng giao dịch theo tháng. Tháng 7 được đánh dấu đỏ là cao điểm (4,178 GD).
+P115: [None] 3. Xu hướng nổi bật: Giá dự báo tăng đều đặn từng tháng: +2.53% (T4) → +2.18% (T5) → +2.38% (T6) → +2.57% (T7) → +2.74% (T8) → +2.90% (T9). Tốc độ tăng gia tốc dần. Mùa hè (T6–T8) là đỉnh giao dịch; Mùa đông (T11–T3) là đáy.
+P116: [None] 4. Giá trị nổi bật: Giá tăng từ $1,304,421 (T4/2026) lên $1,479,617 (T9/2026) — tổng tăng $175,196 trong 6 tháng. Tháng 7 cao điểm (4,178 GD) cao hơn 45% so với đáy tháng 3 (2,874 GD). Tháng 11 là đáy thứ hai (3,272 GD).
+P117: [None] 5. Ý nghĩa kinh doanh: Mỗi tháng giá tăng thêm ~2–3%, tương đương $25,000–$40,000/tháng. Chu kỳ mùa vụ rõ ràng cho phép doanh nghiệp lập kế hoạch nhân sự, marketing và tài chính theo mùa.
+P118: [None] 6. Insight: Tháng 7 là thời điểm tốt nhất để tung sản phẩm ra thị trường. Mùa đông (T11–T3) là cơ hội cho người mua đàm phán giá tốt hơn. Chiến lược timing thị trường dựa vào dữ liệu mùa vụ này có thể mang lại lợi thế 5–10% trong đàm phán.
+P119: [None] 
+P120: [Heading 2] BIỂU ĐỒ 12 — Thay đổi giá YoY theo Borough và Tóm tắt thị trường
+P121: [None] 
+P122: [None] Hình 12: Biểu đồ thay đổi giá TB 2025→2026 theo Borough và hộp tóm tắt xu hướng thị trường
+P123: [None] 1. Mục đích: So sánh tốc độ tăng/giảm giá năm 2025→2026 giữa các borough để xác định khu vực tăng trưởng và suy giảm.
+P124: [None] 2. Dữ liệu thể hiện: Bar chart dọc với giá trị dương (xanh lá) và âm (đỏ) cho 5 borough: Bronx -6.5%, Staten Island -1.9%, Queens +4.2%, Manhattan +4.3%, Brooklyn +5.0%. Kèm theo hộp tóm tắt xu hướng thị trường.
+P125: [None] 3. Xu hướng nổi bật: Thị trường phân hóa mạnh — 2 quận giảm giá (Bronx -6.5%, Staten Island -1.9%) trong khi 3 quận tăng giá (Queens +4.2%, Manhattan +4.3%, Brooklyn +5.0%). Brooklyn là quận tăng mạnh nhất.
+P126: [None] 4. Giá trị nổi bật: Bronx là điểm bất thường lớn nhất với mức giảm -6.5% trong khi toàn thị trường tăng trung bình +4.3%. Brooklyn với mức tăng +5.0% là quận hấp dẫn nhất cho nhà đầu tư growth-oriented.
+P127: [None] 5. Ý nghĩa kinh doanh: Bronx đang trải qua suy giảm giá nghiêm trọng so với xu hướng chung thị trường. Ngược lại, Brooklyn đang nổi lên mạnh mẽ. Dự báo YoY trung vị toàn thị trường +4.3% với đỉnh giao dịch tháng 7.
+P128: [None] 6. Insight: Sự phân hóa này có thể phản ánh quá trình gentrification đang tăng tốc ở Brooklyn trong khi Bronx đang mất đi tính hấp dẫn tương đối. Mua Bronx hiện tại có thể là rủi ro cao; mua Brooklyn có thể đang "riding the wave" nhưng cần đánh giá thêm về định giá.
+P129: [None] 
+P130: [Heading 2] BIỂU ĐỒ 13 — So sánh hiệu năng mô hình, Feature Importance và Predicted vs Actual
+P131: [None] 
+P132: [None] Hình 13: (Trên) Bảng so sánh mô hình ML; (Dưới) Feature Importance của Random Forest và Scatter Predicted vs Actual
+P133: [None] 1. Mục đích: Đánh giá khách quan hiệu suất của hai mô hình ML và giải thích cơ chế hoạt động của mô hình tốt nhất.
+P134: [None] 2. Dữ liệu thể hiện: Bảng so sánh: Linear Regression (R²=0.3492, MAE=$477,916, RMSE=$648,127) và Random Forest (R²=0.4788, MAE=$393,795, RMSE=$580,038). Feature importance chart: Diện tích tổng 48.5%, Tuổi công trình 18.9%, Diện tích đất 9.2%, Mật độ dân số 9.2%, Điểm tiện ích 6.0%, Số căn/tòa 5.8%, GDP địa phương 1.2%, Thu nhập bình quân 1.1%, KC đến trung tâm 0.3%.
+P135: [None] 3. Xu hướng nổi bật: Random Forest vượt trội trên cả 3 tiêu chí: R² cao hơn 37%, MAE thấp hơn 17.6%, RMSE thấp hơn 10.5%. Diện tích tổng chiếm 48.5% importance — vượt trội hoàn toàn so với tất cả yếu tố còn lại.
+P136: [None] 4. Giá trị nổi bật: MAE của Random Forest vẫn còn rất lớn ($393,795) — trung bình mỗi dự báo sai lệch gần $400K. GDP địa phương (1.2%), Thu nhập bình quân (1.1%), KC đến trung tâm (0.3%) có importance cực thấp. Scatter plot cho thấy mô hình under-predict ở phân khúc trên $2M.
+P137: [None] 5. Ý nghĩa kinh doanh: Mô hình Random Forest tốt hơn Linear Regression nhưng cả hai chưa đủ tốt cho việc định giá tự động trong giao dịch thực tế. R² = 0.4788 có nghĩa là mô hình chỉ giải thích được ~48% biến thiên giá.
+P138: [None] 6. Insight: Dominance của diện tích (48.5%) xác nhận "size matters most" — nhưng mô hình bị thiên lệch về phía yếu tố vật lý. Với phân khúc luxury (>$2M), các yếu tố định tính (brand, location prestige, interior quality) mới là yếu tố quyết định nhưng không được capture tốt — đây là lý do mô hình under-predict ở phân khúc cao. Cần bổ sung thêm features hoặc thử XGBoost, Gradient Boosting.
+P139: [None] 
+P140: [Heading 2] BIỂU ĐỒ 14 — Sai số mô hình theo phân khúc giá
+P141: [None] 
+P142: [None] Hình 14: Trái — Sai số TB (%) theo phân khúc giá; Phải — Số mẫu kiểm tra theo phân khúc
+P143: [None] 1. Mục đích: Xác định phân khúc giá nào mô hình dự báo tốt nhất và kém nhất, từ đó đánh giá phạm vi ứng dụng thực tế của mô hình.
+P144: [None] 2. Dữ liệu thể hiện: Biểu đồ trái: Sai số TB (%) theo 5 phân khúc giá (<$200K: 1309.3%, $200K–$500K: 95.5%, $500K–$1M: 34.2%, $1M–$2M: 25.0%, >$2M: 32.9%). Biểu đồ phải: Số mẫu kiểm tra theo phân khúc (<$200K: 56, $200K–$500K: 296, $500K–$1M: 571, $1M–$2M: 350, >$2M: 227).
+P145: [None] 3. Xu hướng nổi bật: Sai số giảm mạnh khi giá tăng từ <$200K đến $1M–$2M, nhưng lại tăng nhẹ ở >$2M. Số mẫu tập trung cao nhất ở $500K–$1M (571 mẫu) — là phân khúc mô hình có nhiều dữ liệu nhất.
+P146: [None] 4. Giá trị nổi bật: Phân khúc <$200K có sai số 1,309.3% — cực kỳ bất thường. $200K–$500K vẫn còn sai số 95.5%. Từ $500K trở lên, sai số giảm về 25–34%. Phân khúc $1M–$2M có sai số thấp nhất (25.0%).
+P147: [None] 5. Ý nghĩa kinh doanh: Mô hình thực tế chỉ có thể sử dụng được cho phân khúc $500K–$2M. Với phân khúc dưới $500K, mô hình gần như không có giá trị thực tiễn. Cần chiến lược riêng cho từng phân khúc.
+P148: [None] 6. Insight: Sai số 1,309% ở phân khúc <$200K không phải lỗi mô hình đơn thuần — có thể phản ánh bản chất dữ liệu: BĐS <$200K ở NYC có thể là các loại đặc thù (parking spots, storage units, distressed properties) mà mô hình không được train đủ. Đây là bài học về data quality và domain knowledge — feature engineering cần phân loại rõ loại tài sản trước khi đưa vào mô hình.
+P149: [None] 
+P150: [Heading 1] PHẦN II: KẾT LUẬN TOÀN BỘ DASHBOARD
+P151: [None] 
+P152: [Heading 2] 1. Dashboard phản ánh điều gì về tình hình chung?
+P153: [None] Dashboard phác họa bức tranh thị trường BĐS New York City đang trong chu kỳ tăng trưởng có chọn lọc: tổng thể tích cực (+4.3% YoY, tổng giá trị $54.5B) nhưng ẩn chứa sự phân hóa địa lý và phân khúc sâu sắc. Không phải tất cả borough đều đi lên (Bronx -6.5%), không phải mọi sản phẩm đều có cùng quỹ đạo. Thị trường đang phát triển theo hướng cao cấp hóa có chọn lọc (42.9% giao dịch ≥$1M), với Brooklyn đang nổi lên mạnh mẽ và Manhattan củng cố vị thế dẫn đầu về giá trị.
+P154: [Heading 2] 2. Các insight quan trọng nhất
+P155: [List Paragraph] Diện tích là king — chiếm 48.5% feature importance, tương quan 0.451 với giá. Nhưng chỉ giải thích ~20–48% biến động giá tùy mô hình.
+P156: [List Paragraph] Phân hóa borough nghiêm trọng — Bronx -6.5% vs Brooklyn +5.0% trong cùng một năm. Đầu tư sai borough = thua lỗ trong môi trường thị trường tăng.
+P157: [List Paragraph] Mô hình ML còn nhiều dư địa cải thiện — MAE $394K, R² 0.48, sai số 1,309% ở phân khúc thấp.
+P158: [List Paragraph] Tính mùa vụ rõ ràng — Tháng 7 cao điểm, Tháng 11 đáy. Cơ hội timing chiến thuật cho cả người mua lẫn người bán.
+P159: [List Paragraph] Dự báo 6 tháng tăng 16.3% — nếu đúng là tín hiệu mua vào mạnh; nếu sai (do macro) là rủi ro lớn cần hedge.
+P160: [Heading 2] 3. Mối liên hệ giữa các biểu đồ
+P161: [List Paragraph] Phân bố giá theo Borough (Box Plot) ↔ Thay đổi YoY theo Borough: Xác nhận cùng câu chuyện — Manhattan và Brooklyn vừa đắt vừa đang tăng nhanh.
+P162: [List Paragraph] Feature Importance (Diện tích 48.5%) ↔ Scatter plot Diện tích–Giá (r=0.451): Nhất quán trong việc xác nhận vai trò của sqft.
+P163: [List Paragraph] Mùa vụ giao dịch (T7 đỉnh) ↔ Dự báo giá tháng (T7/2026: $1.4M cao nhất): Demand cao → giá cao ở cùng thời điểm.
+P164: [List Paragraph] Sai số mô hình theo phân khúc ↔ Scatter Predicted vs Actual: Cùng xác nhận mô hình kém ở hai đầu phân phối giá.
+P165: [List Paragraph] Heatmap tương quan ↔ Feature Importance: Thu nhập và Tiện ích tương quan cao với nhau (r=0.79) nhưng importance thấp — gợi ý multicollinearity đang chia sẻ importance.
+P166: [Heading 2] 4. Vấn đề và cơ hội nổi bật
+P167: [None] Vấn đề:
+P168: [List Paragraph] Mô hình dự báo giá chưa đủ tin cậy cho phân khúc <$500K và >$2M.
+P169: [List Paragraph] Bronx đang suy giảm — cần giám sát chặt để tránh rủi ro danh mục đầu tư.
+P170: [List Paragraph] Amenity Score TB chỉ 2.5/10 — hạ tầng tiện ích là điểm yếu cơ cấu của thị trường.
+P171: [None] Cơ hội:
+P172: [List Paragraph] Brooklyn đang tăng tốc (+5.0%) với thanh khoản cao và giá còn thấp hơn Manhattan — là phân khúc risk-adjusted tốt nhất hiện tại.
+P173: [List Paragraph] Mùa thấp điểm (T11–T3) là cửa sổ thời gian để mua với giá tốt hơn.
+P174: [List Paragraph] Cải tạo BĐS cũ (Tuổi CT tương quan âm) — Walkup Apartments già cũ có tiềm năng value-add cao.
+P175: [List Paragraph] Phân khúc $500K–$1M là sweet spot: volume cao nhất, sai số mô hình thấp nhất, phù hợp để xây dựng portfolio scaling.
+P176: [Heading 2] 5. Khuyến nghị chiến lược
+P177: [None] Đối với Nhà đầu tư:
+P178: [List Paragraph] Ưu tiên Brooklyn và Queens cho chiến lược growth; Manhattan cho chiến lược capital preservation.
+P179: [List Paragraph] Tránh Bronx cho đến khi có tín hiệu phục hồi rõ ràng (cần theo dõi Q3–Q4 2026).
+P180: [List Paragraph] Thực hiện giao dịch vào T11–T2 để tận dụng thị trường hạ nhiệt; bán vào T6–T8 để tối đa hóa giá bán.
+P181: [List Paragraph] Nhắm phân khúc $500K–$1.5M — thanh khoản tốt nhất, mô hình dự báo đáng tin nhất, rủi ro thấp hơn phân khúc ultra-luxury.
+P182: [None] Đối với Đội ngũ Data/Product:
+P183: [List Paragraph] Bổ sung features định tính: tầng, view, tình trạng nội thất, proximity to transit.
+P184: [List Paragraph] Xây dựng mô hình riêng cho từng phân khúc giá thay vì một mô hình chung.
+P185: [List Paragraph] Thử nghiệm XGBoost, LightGBM hoặc Ensemble methods để cải thiện R² từ 0.48 lên mức mục tiêu >0.65.
+P186: [List Paragraph] Loại dữ liệu phi chuẩn (<$200K) ra khỏi tập train hoặc xử lý bằng sub-model riêng.
+P187: [None] Đối với Doanh nghiệp BĐS:
+P188: [List Paragraph] Tập trung marketing vào tháng 5–7 (lead generation mạnh nhất trong năm).
+P189: [List Paragraph] Phát triển sản phẩm Mixed-Use (Store Buildings) — giá/sqft cao nhất thị trường ($906/sqft).
+P190: [List Paragraph] Chiến lược value-add renovation trên Walkup Apartments để nâng giá trị theo phân khúc cao hơn.
+P191: [None] 
+P192: [None] Báo cáo được tổng hợp dựa trên dữ liệu hiển thị trong Dashboard. Các dự báo 6 tháng mang tính tham khảo và cần được điều chỉnh theo điều kiện vĩ mô thực tế (lãi suất, chính sách tín dụng, cung cầu lao động).
