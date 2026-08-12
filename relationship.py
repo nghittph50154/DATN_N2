@@ -10,7 +10,7 @@ if sys.stdout.encoding != 'utf-8':
 # Sơ đồ quan hệ dạng ASCII
 ASCII_ERD = """
 ================================================================================
-                    SƠ ĐỒ QUAN HỆ CƠ SỞ DỮ LIỆU (ASCII ERD - 3NF)
+                    SƠ ĐỒ QUAN HỆ CƠ SỞ DỮ LIỆU (ASCII ERD - 3NF) 
 ================================================================================
 
     [dim_borough]
