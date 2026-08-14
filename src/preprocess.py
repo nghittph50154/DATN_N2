@@ -31,7 +31,11 @@ def collect_external_data(df: pd.DataFrame) -> pd.DataFrame:
     Ghép thêm các chỉ số kinh tế – xã hội theo borough.
     Trong dự án thực có thể thay bằng API GSO / Census.
     """
+<<<<<<< HEAD
     print("[LOG] Step 1: Thu thập & ghép dữ liệu ngoại vi (Census, GDP, Amenities)...")
+=======
+    print("[LOG] Step 1: Thu thập & ghép dữ liệu ngoại vi (Census, GDP, Amenities)....")
+>>>>>>> 12b918dabb1dfabd8395b108285e2c0f01eb3b63
 
     economic_indicators = {
         '1': {'pop_density': 72000, 'avg_income': 88000, 'gdp_local': 6.8, 'dist_center': 2.0},
@@ -159,4 +163,8 @@ if __name__ == '__main__':
     except Exception as e:
         import traceback
         traceback.print_exc()
+<<<<<<< HEAD
         print(f"[ERROR] Preprocessing failed: {e}")
+=======
+        print(f"[ERROR] Preprocessing failed: {e}") 
+>>>>>>> 12b918dabb1dfabd8395b108285e2c0f01eb3b63

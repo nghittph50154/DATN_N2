@@ -1,9 +1,15 @@
 ============================================================
+<<<<<<< HEAD
 CLEANING REPORT — 2026-06-28 17:15:46
 ============================================================
 INPUT : 49,041 rows | 36 cols
 OUTPUT: 49,041 rows | 32 cols
 
+=======
+CLEANING REPORT — 2026-08-01 22:07:01
+============================================================
+INPUT : 49,041 rows | 36 cols
+>>>>>>> 12b918dabb1dfabd8395b108285e2c0f01eb3b63
 
 [STEP - 1 - DUPLICATE REMOVAL]
   [ACTION]  Kiểm tra duplicate hoàn toàn
@@ -16,6 +22,7 @@ OUTPUT: 49,041 rows | 32 cols
 [STEP - 2 - MISSING VALUES HANDLING]
   [ACTION]  Drop cột 'easement' (>50% missing)
   [WHY]     Cột có 100.00% giá trị thiếu → không đủ thông tin để phân tích
+<<<<<<< HEAD
   [IMPACT]  36 cols → 30 cols (drop 'easement')
   [ACTION]  Drop cột 'apartment_number' (>50% missing)
   [WHY]     Cột có 75.32% giá trị thiếu → không đủ thông tin để phân tích
@@ -32,6 +39,24 @@ OUTPUT: 49,041 rows | 32 cols
   [ACTION]  Drop cột 'SQFT_PER_UNIT' (>50% missing)
   [WHY]     Cột có 52.43% giá trị thiếu → không đủ thông tin để phân tích
   [IMPACT]  36 cols → 30 cols (drop 'SQFT_PER_UNIT')
+=======
+  [IMPACT]  36 cols → 35 cols (drop 'easement')
+  [ACTION]  Drop cột 'apartment_number' (>50% missing)
+  [WHY]     Cột có 75.32% giá trị thiếu → không đủ thông tin để phân tích
+  [IMPACT]  35 cols → 34 cols (drop 'apartment_number')
+  [ACTION]  Drop cột 'land_sqft' (>50% missing)
+  [WHY]     Cột có 52.26% giá trị thiếu → không đủ thông tin để phân tích
+  [IMPACT]  34 cols → 33 cols (drop 'land_sqft')
+  [ACTION]  Drop cột 'gross_sqft' (>50% missing)
+  [WHY]     Cột có 52.26% giá trị thiếu → không đủ thông tin để phân tích
+  [IMPACT]  33 cols → 32 cols (drop 'gross_sqft')
+  [ACTION]  Drop cột 'sale_price_per_sqft' (>50% missing)
+  [WHY]     Cột có 52.48% giá trị thiếu → không đủ thông tin để phân tích
+  [IMPACT]  32 cols → 31 cols (drop 'sale_price_per_sqft')
+  [ACTION]  Drop cột 'sqft_per_unit' (>50% missing)
+  [WHY]     Cột có 52.43% giá trị thiếu → không đủ thông tin để phân tích
+  [IMPACT]  31 cols → 30 cols (drop 'sqft_per_unit')
+>>>>>>> 12b918dabb1dfabd8395b108285e2c0f01eb3b63
   [ACTION]  Fill cột số 'zip_code' với median
   [WHY]     Dữ liệu lệch → median robust hơn mean
   [IMPACT]  16 nulls → 0 nulls (median = 11,205.00)
