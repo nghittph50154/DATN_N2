@@ -1,7 +1,9 @@
 ============================================================
-CLEANING REPORT — 2026-08-01 22:07:01
+CLEANING REPORT — 2026-06-28 17:15:46
 ============================================================
 INPUT : 49,041 rows | 36 cols
+OUTPUT: 49,041 rows | 32 cols
+
 
 [STEP - 1 - DUPLICATE REMOVAL]
   [ACTION]  Kiểm tra duplicate hoàn toàn
@@ -14,22 +16,22 @@ INPUT : 49,041 rows | 36 cols
 [STEP - 2 - MISSING VALUES HANDLING]
   [ACTION]  Drop cột 'easement' (>50% missing)
   [WHY]     Cột có 100.00% giá trị thiếu → không đủ thông tin để phân tích
-  [IMPACT]  36 cols → 35 cols (drop 'easement')
+  [IMPACT]  36 cols → 30 cols (drop 'easement')
   [ACTION]  Drop cột 'apartment_number' (>50% missing)
   [WHY]     Cột có 75.32% giá trị thiếu → không đủ thông tin để phân tích
-  [IMPACT]  35 cols → 34 cols (drop 'apartment_number')
+  [IMPACT]  36 cols → 30 cols (drop 'apartment_number')
   [ACTION]  Drop cột 'land_sqft' (>50% missing)
   [WHY]     Cột có 52.26% giá trị thiếu → không đủ thông tin để phân tích
-  [IMPACT]  34 cols → 33 cols (drop 'land_sqft')
+  [IMPACT]  36 cols → 30 cols (drop 'land_sqft')
   [ACTION]  Drop cột 'gross_sqft' (>50% missing)
   [WHY]     Cột có 52.26% giá trị thiếu → không đủ thông tin để phân tích
-  [IMPACT]  33 cols → 32 cols (drop 'gross_sqft')
-  [ACTION]  Drop cột 'sale_price_per_sqft' (>50% missing)
+  [IMPACT]  36 cols → 30 cols (drop 'gross_sqft')
+  [ACTION]  Drop cột 'SALE PRICE PER SQFT' (>50% missing)
   [WHY]     Cột có 52.48% giá trị thiếu → không đủ thông tin để phân tích
-  [IMPACT]  32 cols → 31 cols (drop 'sale_price_per_sqft')
-  [ACTION]  Drop cột 'sqft_per_unit' (>50% missing)
+  [IMPACT]  36 cols → 30 cols (drop 'SALE PRICE PER SQFT')
+  [ACTION]  Drop cột 'SQFT_PER_UNIT' (>50% missing)
   [WHY]     Cột có 52.43% giá trị thiếu → không đủ thông tin để phân tích
-  [IMPACT]  31 cols → 30 cols (drop 'sqft_per_unit')
+  [IMPACT]  36 cols → 30 cols (drop 'SQFT_PER_UNIT')
   [ACTION]  Fill cột số 'zip_code' với median
   [WHY]     Dữ liệu lệch → median robust hơn mean
   [IMPACT]  16 nulls → 0 nulls (median = 11,205.00)
